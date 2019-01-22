@@ -30,11 +30,19 @@ class Discord_API(discord.Client):
         async def on_message(message):
             if message.content.startswith(config["key"] + 'ran_meme'):
 
-                ran_id : int = random.randint(0,db.max_id())
+                try:
+                    how_many:int = int(message.content.split(" ")[1])
+                    if how_many > 10:
+                        how_many = 10
+                except:
+                    how_many:int = 1
 
-                meme = db.get_meme_by_id(ran_id)
+                for x in range(how_many):
+                    ran_id : int = random.randint(0,db.max_id())
 
-                await self.send_message(message.channel, 'Here your meme: ' + meme[1])
+                    meme = db.get_meme_by_id(ran_id)
+
+                    await self.send_message(message.channel, 'Here your meme: ' + meme[1])
 
                 #await self.edit_message(tmp, 'You have {} messages :joy:')
 
@@ -47,8 +55,9 @@ class Discord_API(discord.Client):
             if message.content.startswith( config["key"] + 'help'):
                 await self.send_message(message.channel, 'Memologe Commands:')
                 await self.send_message(message.channel, ':arrow_right: ```$post_meme <link> <tags>``` seperate multiple tags with ;')
-                await self.send_message(message.channel, ':arrow_right: ```$ran_meme``` posts random meme')
-
+                await self.send_message(message.channel, ':arrow_right: ```$ran_meme <how_many>``` posts random meme')
+                await self.send_message(message.channel, ':arrow_right: ```$search <tag> <how_many = 1>``` searches memes based on tag')
+                await self.send_message(message.channel, ':arrow_right: ```$size``` amount of memes in the db')
 
             if message.content.startswith( config["key"] + "post_meme"):
 
@@ -70,8 +79,19 @@ class Discord_API(discord.Client):
 
                 await self.send_message(message.channel, "There are : " + str(size[0][0]) + " memes in the database")
 
+            if message.content.startswith(config["key"] + "search"):
+                tag : str = message.content.split(" ")[1]
+                try:
+                    how_may : int = int(message.content.split(" ")[2])
+                except:
+                    how_may : int = 1
 
+                data = db.search_meme(tag)
+                random.shuffle(data)
 
+                for x in range(how_may):
+
+                    await self.send_message(message.channel, data[x][1])
         @self.event
         async def on_reaction_add(reaction, user):
             print(type(user),user)

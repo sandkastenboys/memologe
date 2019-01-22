@@ -47,8 +47,7 @@ class DB:
 
     def search_meme(self, tags:str)->list:
 
-
-        self.cursor.execute("SELECT * FROM memes WHERE tags LIKE '%%s%'",(tags))
+        self.cursor.execute("SELECT * FROM memes WHERE tags LIKE '%" + tags + "%'")
 
         data = self.cursor.fetchall()
 
