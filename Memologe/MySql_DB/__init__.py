@@ -83,3 +83,5 @@ class DB:
         self.cursor.execute("SELECT COUNT(*) FROM memes")
         data = self.cursor.fetchall()
         return data
+
+db = DB()

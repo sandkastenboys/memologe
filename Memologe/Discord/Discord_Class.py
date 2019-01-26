@@ -4,7 +4,7 @@ import asyncio
 import emoji
 import argparse
 from config import config
-from Memologe.MySql_DB import DB
+from Memologe.MySql_DB import db
 import time
 import random
 
@@ -124,6 +124,5 @@ class Discord_API(discord.Client):
 
 
             #db.add_meme(meme[0], time.time(), meme[1])
-db = DB()
 d = Discord_API()
 d.run(config["token"])

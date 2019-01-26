@@ -1,0 +1,6 @@
+argparse
+telepot
+asyncio
+emoji
+mysql
+discord

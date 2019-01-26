@@ -6,5 +6,5 @@ config:dict = {
    "db_host":"localhost",
    "db_user":"memologe",
    "db_pw":"memes_are_the_best",
-   "home_discord":451065403821654016
+   "tele_token":"778745612:AAHFnKvwmRTvS2wDtBlAvbCHXmHgjum9hYM"
 }
