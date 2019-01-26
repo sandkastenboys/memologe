@@ -4,7 +4,7 @@ from config import config
 import time
 
 class DB:
-    def __init__(self) -> 'DB':
+    def __init__(self):
         self.mydb = mysql.connector.connect(
             host=config["db_host"],
             user=config["db_user"],
@@ -31,21 +31,21 @@ class DB:
 
         return id
 
-    def add_meme(self, link:str,time:int, tags:str = "") -> None:
+    def add_meme(self, link,time, tags = ""):
 
-        id : int = self.max_id() + 1
+        id = self.max_id() + 1
 
         self.cursor.execute("INSERT INTO memes (meme_id, link, tags, ptime, rating) VALUES (%s, %s, %s, %s, %s)",(id,link,tags.lower(),time,0))
 
         self.mydb.commit()
 
-    def add_tags_by_id(self, id: int, tags:str) -> None:
+    def add_tags_by_id(self, id, tags):
 
         self.cursor.execute( "UPDATE memes SET tags += '%s' WHERE meme_id = '%s'",(tags, id))
 
         self.mydb.commit()
 
-    def search_meme(self, tags:str)->list:
+    def search_meme(self, tags)->list:
 
         self.cursor.execute("SELECT * FROM memes WHERE tags LIKE '%" + tags + "%'")
 
@@ -60,7 +60,7 @@ class DB:
         self.cursor.execute("DELETE FROM memes")
         self.mydb.commit()
 
-    def check_ex(self, link: str):
+    def check_ex(self, link):
         print(link)
         self.cursor.execute("SELECT * FROM memes WHERE link = %s",(link,))
 
@@ -70,7 +70,7 @@ class DB:
             return False
         return True
 
-    def get_meme_by_id(self, id:int):
+    def get_meme_by_id(self, id):
         self.cursor.execute("SELECT * FROM memes WHERE meme_id = %s",(id,))
 
         data = self.cursor.fetchall()

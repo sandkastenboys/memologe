@@ -17,14 +17,14 @@ def handle(message):
     if message[0] == config["key"] + 'ran_meme':
 
         try:
-            how_many: int = int(message[1])
+            how_many = int(message[1])
             if how_many > 10:
                 how_many = 10
         except:
-            how_many: int = 1
+            how_many = 1
 
         for x in range(how_many):
-            ran_id: int = random.randint(0, db.max_id())
+            ran_id = random.randint(0, db.max_id())
 
             meme = db.get_meme_by_id(ran_id)
             print(meme)
@@ -40,11 +40,11 @@ def handle(message):
         bot.sendMessage(chat_id, "There are : " + str(size[0][0]) + " memes in the database")
 
     if message[0] == config["key"] + "search":
-        tag: str = message[1]
+        tag = message[1]
         try:
-            how_may: int = int(message[2])
+            how_may = int(message[2])
         except:
-            how_may: int = 1
+            how_may = 1
 
         data = db.search_meme(tag)
 

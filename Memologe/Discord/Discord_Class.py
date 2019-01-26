@@ -8,7 +8,7 @@ from Memologe.MySql_DB import db
 import time
 import random
 
-last_time : int = 0
+last_time  = 0
 
 
 def check_for_link(link):
@@ -16,7 +16,7 @@ def check_for_link(link):
 
 def find_link(post:str):
     try:
-        ind : int = post.index("http")
+        ind = post.index("http")
         temp = post[ind:].split(" ")
         return temp[0]
     except:
@@ -31,14 +31,14 @@ class Discord_API(discord.Client):
             if message.content.startswith(config["key"] + 'ran_meme'):
 
                 try:
-                    how_many:int = int(message.content.split(" ")[1])
+                    how_many = int(message.content.split(" ")[1])
                     if how_many > 10:
                         how_many = 10
                 except:
-                    how_many:int = 1
+                    how_many = 1
 
                 for x in range(how_many):
-                    ran_id : int = random.randint(0,db.max_id())
+                    ran_id  = random.randint(0,db.max_id())
 
                     meme = db.get_meme_by_id(ran_id)
 
@@ -61,7 +61,7 @@ class Discord_API(discord.Client):
 
             if message.content.startswith( config["key"] + "post_meme"):
 
-                meme: list = message.content.split(" ")[1:]
+                meme = message.content.split(" ")[1:]
                 print(db.check_ex(meme[0]))
                 if db.check_ex(meme[0]) is False:
                     print("ADD:",meme)
@@ -80,11 +80,11 @@ class Discord_API(discord.Client):
                 await self.send_message(message.channel, "There are : " + str(size[0][0]) + " memes in the database")
 
             if message.content.startswith(config["key"] + "search"):
-                tag : str = message.content.split(" ")[1]
+                tag = message.content.split(" ")[1]
                 try:
-                    how_may : int = int(message.content.split(" ")[2])
+                    how_may  = int(message.content.split(" ")[2])
                 except:
-                    how_may : int = 1
+                    how_may = 1
 
                 data = db.search_meme(tag)
                 random.shuffle(data)
