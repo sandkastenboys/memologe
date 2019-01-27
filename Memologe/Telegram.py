@@ -5,11 +5,12 @@ from Memologe.MySql_DB import db
 import random
 import time
 
-#https://telepot.readthedocs.io/en/latest/
+
+# https://telepot.readthedocs.io/en/latest/
 def handle(message):
     print(message)
     content_type, chat_type, chat_id = telepot.glance(message)
-    print(content_type,chat_type,chat_id,message["text"])
+    print(content_type, chat_type, chat_id, message["text"])
 
     message = message["text"].split(" ")
     if chat_type == "supergroup":
@@ -30,9 +31,9 @@ def handle(message):
             print(meme)
             bot.sendMessage(chat_id, meme[1])
 
-
     if message[0] == config["key"] + 'help':
-        bot.sendMessage(chat_id, 'Memologe Commands Telegram:\n$ran_meme <how_many> posts random meme\n$search <tag> <how_many = 1> searches memes based on tag\n$size amount of memes in the db')
+        bot.sendMessage(chat_id,
+                        'Memologe Commands Telegram:\n$ran_meme <how_many> posts random meme\n$search <tag> <how_many = 1> searches memes based on tag\n$size amount of memes in the db')
 
     if message[0] == config["key"] + "size":
         size = db.size_of_db()
@@ -58,6 +59,7 @@ def handle(message):
                 bot.sendMessage(chat_id, data[x][1])
             except:
                 break
+
 
 bot = telepot.Bot(config["tele_token"])
 

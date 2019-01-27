@@ -1,7 +1,7 @@
-
 import mysql.connector
 from config import config
 import time
+
 
 class DB:
     def __init__(self):
@@ -9,12 +9,13 @@ class DB:
             host=config["db_host"],
             user=config["db_user"],
             passwd=config["db_pw"],
-            database = "memes",
+            database="memes",
         )
         self.cursor = self.mydb.cursor()
 
         try:
-            self.cursor.execute("CREATE TABLE memes( meme_id INTEGER ,link varchar(4096), tags varchar(512), ptime INTEGER , rating INTEGER )")
+            self.cursor.execute(
+                "CREATE TABLE memes( meme_id INTEGER ,link varchar(4096), tags varchar(512), ptime INTEGER , rating INTEGER )")
         except:
             print("Table memes already exists")
 
@@ -31,21 +32,22 @@ class DB:
 
         return id
 
-    def add_meme(self, link,time, tags = ""):
+    def add_meme(self, link, time, tags=""):
 
         id = self.max_id() + 1
 
-        self.cursor.execute("INSERT INTO memes (meme_id, link, tags, ptime, rating) VALUES (%s, %s, %s, %s, %s)",(id,link,tags.lower(),time,0))
+        self.cursor.execute("INSERT INTO memes (meme_id, link, tags, ptime, rating) VALUES (%s, %s, %s, %s, %s)",
+                            (id, link, tags.lower(), time, 0))
 
         self.mydb.commit()
 
     def add_tags_by_id(self, id, tags):
 
-        self.cursor.execute( "UPDATE memes SET tags += '%s' WHERE meme_id = '%s'",(tags, id))
+        self.cursor.execute("UPDATE memes SET tags = %s WHERE meme_id = %s", (tags, id))
 
         self.mydb.commit()
 
-    def search_meme(self, tags)->list:
+    def search_meme(self, tags):
 
         self.cursor.execute("SELECT * FROM memes WHERE tags LIKE '%" + tags + "%'")
 
@@ -62,7 +64,7 @@ class DB:
 
     def check_ex(self, link):
         print(link)
-        self.cursor.execute("SELECT * FROM memes WHERE link = %s",(link,))
+        self.cursor.execute("SELECT * FROM memes WHERE link = %s", (link,))
 
         data = self.cursor.fetchall()
 
@@ -71,11 +73,10 @@ class DB:
         return True
 
     def get_meme_by_id(self, id):
-        self.cursor.execute("SELECT * FROM memes WHERE meme_id = %s",(id,))
+        self.cursor.execute("SELECT * FROM memes WHERE meme_id = %s", (id,))
 
         data = self.cursor.fetchall()
-        print(data,id)
-
+        print(data, id)
 
         return data[0]
 
@@ -83,5 +84,20 @@ class DB:
         self.cursor.execute("SELECT COUNT(*) FROM memes")
         data = self.cursor.fetchall()
         return data
+
+    def get_memes_with_tags(self):
+        self.cursor.execute("SELECT * FROM memes WHERE tags != ''")
+
+        data = self.cursor.fetchall()
+
+        return data
+
+    def get_meme_id_by_link(self, link):
+        self.cursor.execute("SELECT * FROM memes WHERE link = %s", (link,))
+
+        data = self.cursor.fetchall()
+
+        return data
+
 
 db = DB()
