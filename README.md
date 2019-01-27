@@ -21,7 +21,12 @@ https://gist.github.com/SpartanerSpaten/20ecb59b082022103bbbfabe4aa4a24e
 And dont forget to change the config.
 
 
-### Run
+### Run / Deployment
+
+
+Screen use full Prozess Manager.
+https://wiki.ubuntuusers.de/Screen/
+
 
 ```sysbash
 python3 main.py

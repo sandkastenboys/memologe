@@ -3,4 +3,5 @@ telepot
 asyncio
 emoji
 mysql
+pymysql
 discord

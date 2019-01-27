@@ -22,12 +22,12 @@ class DB:
 
         self.cursor.execute("SELECT MAX(meme_id) FROM memes;")
 
-        res:list = self.cursor.fetchall()
+        res = self.cursor.fetchall()
 
         if res[0][0] is None:
-            id:int = 0
+            id = 0
         else:
-            id:int = res[0][0]
+            id = res[0][0]
 
         return id
 
