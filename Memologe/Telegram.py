@@ -14,7 +14,8 @@ def handle(message):
 
     message = message["text"].split(" ")
     if chat_type == "supergroup":
-        message[0] = message[0][1:]
+        message[0] = "$" + message[0][1:]
+
     if message[0] == config["key"] + 'ran_meme':
 
         try:
@@ -59,6 +60,9 @@ def handle(message):
                 bot.sendMessage(chat_id, data[x][1])
             except:
                 break
+
+    if message[0] == config["key"] + "tags":
+        bot.sendMessage(chat_id, "\n".join(db.tags))
 
 
 bot = telepot.Bot(config["tele_token"])

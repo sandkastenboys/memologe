@@ -23,34 +23,9 @@ def find_link(post: str):
         return False
 
 
-def db2tags():
-    cat = []
-
-    memes = db.get_memes_with_tags()
-
-    for meme in memes:
-
-        for tag in meme[2].split(";"):
-
-            if tag not in cat:
-                cat.append(tag)
-
-    return cat
-
-
-def add_tags(string,tags):
-    for mtag in string.split(";"):
-
-        if mtag not in tags:
-            tags.append(mtag)
-
-
-
 class Discord_API(discord.Client):
     def __init__(self):
         super().__init__()
-
-        self.tags = db2tags()
 
         @self.event
         async def on_message(message):
@@ -109,7 +84,7 @@ class Discord_API(discord.Client):
                         meme[1] += ";"
                     db.add_meme(meme[0], int(time.time()), meme[1])
                     await self.post_meme(meme[0])
-                    add_tags(meme[1],self.tags)
+                    db.add_tags(meme[1])
                 else:
                     await self.send_message(message.channel, "This Meme already got posted")
 
@@ -141,7 +116,7 @@ class Discord_API(discord.Client):
                         break
 
             if message.content.startswith(config["key"] + "tags"):
-                await self.send_message(message.channel, "```" + "\n".join(self.tags) + "```")
+                await self.send_message(message.channel, "```" + "\n".join(db.tags) + "```")
 
         @self.event
         async def on_reaction_add(reaction, user):

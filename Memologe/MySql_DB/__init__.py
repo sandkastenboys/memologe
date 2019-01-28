@@ -12,12 +12,14 @@ class DB:
             database="memes",
         )
         self.cursor = self.mydb.cursor()
-
+        self.tags = []
         try:
             self.cursor.execute(
                 "CREATE TABLE memes( meme_id INTEGER ,link varchar(4096), tags varchar(512), ptime INTEGER , rating INTEGER )")
         except:
             print("Table memes already exists")
+
+        self.db2tags()
 
     def max_id(self):
 
@@ -99,5 +101,24 @@ class DB:
 
         return data
 
+    def db2tags(self):
+
+        memes = self.get_memes_with_tags()
+        for meme in memes:
+
+            for tag in meme[2].split(";"):
+
+                if tag not in self.tags:
+                    self.tags.append(tag)
+
+        self.tags = sorted(self.tags)
+
+    def add_tags(self,string):
+        for mtag in string.split(";"):
+
+            if mtag not in self.tags:
+                self.tags.append(mtag)
+
+        self.tags = sorted(self.tags)
 
 db = DB()
