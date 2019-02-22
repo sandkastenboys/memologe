@@ -2,9 +2,10 @@
 version: "3.2"
 services:
   adminer:
-    image: adminer    
+    image: adminer
     ports:
       - 8080:8080
+    network_mode: "host"
     restart: unless-stopped
 
   db:
@@ -14,5 +15,6 @@ services:
       MYSQL_DATABASE: 'memes'
       MYSQL_PASSWORD: 'memes_are_the_best'
       MYSQL_ROOT_PASSWORD: memes_are_the_best      
-      MYSQL_USER: 'memologe'      
+      MYSQL_USER: 'memologe'
+    network_mode: "host"
     restart: unless-stopped
