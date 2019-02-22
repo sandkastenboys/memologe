@@ -15,4 +15,4 @@ services:
       MYSQL_PASSWORD: 'memes_are_the_best'
       MYSQL_ROOT_PASSWORD: memes_are_the_best      
       MYSQL_USER: 'memologe'      
-   restart: unless-stopped
+    restart: unless-stopped
