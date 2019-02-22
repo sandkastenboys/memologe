@@ -19,6 +19,7 @@ WORKDIR /app
 
 COPY . /app
 
+RUN python3 -m pip install -U discord.py
 RUN pip3 install -r requirements.txt
 
 RUN [ "cross-build-end" ]

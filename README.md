@@ -34,3 +34,5 @@ python3 main.py
 
 https://cloud.docker.com/repository/docker/einspaten/memologe
 (You have to request access)
+
+There is also a Travis entry.
