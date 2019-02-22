@@ -8,9 +8,7 @@ import time
 
 # https://telepot.readthedocs.io/en/latest/
 def handle(message):
-    print(message)
     content_type, chat_type, chat_id = telepot.glance(message)
-    print(content_type, chat_type, chat_id, message["text"])
 
     message = message["text"].split(" ")
     if chat_type == "supergroup":

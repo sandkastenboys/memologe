@@ -1,6 +1,7 @@
 import mysql.connector
 from config import config
 import time
+import random
 
 
 class DB:
@@ -100,6 +101,23 @@ class DB:
         data = self.cursor.fetchall()
 
         return data
+
+    def get_recent(self, threshhold, max):
+
+        return_list = []
+
+        self.cursor.execute("SELECT * FROM memes WHERE ptime > %s;" ,(time.time()-threshhold,))
+
+        data = self.cursor.fetchall()
+        print(data)
+        if len(data) < max:
+            for x in data:
+                return_list.append(x)
+        else:
+            for x in range(max):
+                return_list.append(random.choice(data))
+
+        return return_list
 
     def db2tags(self):
 

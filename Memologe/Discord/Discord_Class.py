@@ -45,7 +45,6 @@ class Discord_API(discord.Client):
 
                     await self.send_message(message.channel, 'Here your meme: ' + meme[1])
 
-                # await self.edit_message(tmp, 'You have {} messages :joy:')
 
             if message.content.startswith(config["key"] + 'cate_meme'):
                 command = message.content.split(" ")[1:]
@@ -67,29 +66,26 @@ class Discord_API(discord.Client):
 
             if message.content.startswith(config["key"] + 'help'):
                 await self.send_message(message.channel, 'Memologe Commands:')
-                await self.send_message(message.channel,
-                                        ':arrow_right: ```$post_meme <link> <tags>``` seperate multiple tags with ;')
-                await self.send_message(message.channel, ':arrow_right: ```$ran_meme <how_many>``` posts random meme')
-                await self.send_message(message.channel,
-                                        ':arrow_right: ```$search <tag> <how_many = 1>``` searches memes based on tag')
-                await self.send_message(message.channel, ':arrow_right: ```$size``` amount of memes in the db')
+                await self.send_message(message.channel, ':arrow_right: $post_meme <link> <tags> seperate multiple tags with ;')
+                await self.send_message(message.channel, ':arrow_right: $ran_meme <how_many> posts random meme')
+                await self.send_message(message.channel, ':arrow_right: $search <tag> <how_many = 1> searches memes based on tag')
+                await self.send_message(message.channel, ':arrow_right: $size amount of memes in the db')
 
             if message.content.startswith(config["key"] + "post_meme"):
 
                 meme = message.content.split(" ")[1:]
                 print(db.check_ex(meme[0]))
                 if db.check_ex(meme[0]) is False and type(find_link(meme[0])) is str:
-                    print("ADD:", meme)
-                    if meme[1][-1] != ";":
-                        meme[1] += ";"
+                    try:
+                        if meme[1][-1] != ";":
+                            meme[1] += ";"
+                    except:
+                        meme.append("")
                     db.add_meme(meme[0], int(time.time()), meme[1])
                     await self.post_meme(meme[0])
                     db.add_tags(meme[1])
                 else:
                     await self.send_message(message.channel, "This Meme already got posted")
-
-                # if time.time() - last_time > 86400:
-                #    await self.read_meme_channel()
 
             if message.content.startswith(config["key"] + "size"):
                 size = db.size_of_db()
@@ -109,7 +105,6 @@ class Discord_API(discord.Client):
                 count = 0
                 while count < how_many:
                     if tag + ";" in data[count][2] or data[count][2].split(";")[-1] == tag:
-                        print(data[count])
                         await self.send_message(message.channel, data[count][1])
                     count += 1
                     if count >= len(data):
@@ -118,9 +113,13 @@ class Discord_API(discord.Client):
             if message.content.startswith(config["key"] + "tags"):
                 await self.send_message(message.channel, "```" + "\n".join(db.tags) + "```")
 
+            if message.content.startswith(config["key"] + "recent"):
+                data = db.get_recent(10000,10)
+                for x in data:
+                    await self.send_message(message.channel, x[1])
+
         @self.event
         async def on_reaction_add(reaction, user):
-            print(type(user), user)
             if str(user) != "Memologe#3481":
                 # channel = reaction.message.channel
 
@@ -136,7 +135,7 @@ class Discord_API(discord.Client):
                 if channel.name == 'memes_lib':
                     await self.send_message(channel, link)
 
-    async def read_meme_channel(self):
+    async def read_meme_channel(self): # This Funktion just reads the entire meme channel (not used anylonger)
         for server in self.servers:
             for channel in server.channels:
                 if channel.name == 'memes':
@@ -147,8 +146,6 @@ class Discord_API(discord.Client):
                                 print("add meme:", link)
                                 db.add_meme(link, int(time.time()), "")
                                 await self.post_meme(link)
-
-            # db.add_meme(meme[0], time.time(), meme[1])
 
 
 
