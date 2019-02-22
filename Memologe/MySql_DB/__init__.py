@@ -2,11 +2,11 @@ import mysql.connector
 from config import config
 import time
 import random
-
+import pymysql
 
 class DB:
     def __init__(self):
-        self.mydb = mysql.connector.connect(
+        self.mydb = pymysql.connect(
             host=config["db_host"],
             user=config["db_user"],
             passwd=config["db_pw"],

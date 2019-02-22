@@ -2,7 +2,6 @@ argparse
 telepot
 asyncio
 emoji
-mysql
 pymysql
 mysql
 discord
