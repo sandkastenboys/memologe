@@ -2,6 +2,7 @@ config = {
     "token": "NTM2NjIxMzc2NjQ4MzgwNDQ1.DyetMw.blkw2eKf4LF_XlUmIgIf2Led470",  # Discord Bot Token
     "key": "$",
     "db_host": "localhost",
+    "db_port": "3307",
     "db_user": "root",
     "db_pw": "",
     "tele_token": "778745612:AAHFnKvwmRTvS2wDtBlAvbCHXmHgjum9hYM",  # Telegram Bot token
