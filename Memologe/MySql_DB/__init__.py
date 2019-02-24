@@ -14,7 +14,7 @@ class DB:
         )
         self.cursor = self.mydb.cursor()
         self.tags = []
-        self.cursor.execute("SET GLOBAL connect_timeout=60")
+        self.cursor.execute("SET GLOBAL connect_timeout=600")
         try:
             self.cursor.execute(
                 "CREATE TABLE memes( meme_id INTEGER ,link varchar(4096), tags varchar(512), ptime INTEGER , rating INTEGER )")
