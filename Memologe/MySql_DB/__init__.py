@@ -7,6 +7,7 @@ class DB:
     def __init__(self):
         self.mydb = pymysql.connect(
             host=config["db_host"],
+            port=config["db_port"],
             user=config["db_user"],
             passwd=config["db_pw"],
             database="memes",
