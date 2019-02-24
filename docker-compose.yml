@@ -13,7 +13,7 @@ services:
     environment:
       MYSQL_DATABASE: 'memes'
       MYSQL_PASSWORD: 'memes_are_the_best'
-      MYSQL_ROOT_PASSWORD: ''
+      MYSQL_ROOT_PASSWORD: 'memes_are_the_best'
       MYSQL_USER: 'memologe'
     ports:
       - 3307:3306
