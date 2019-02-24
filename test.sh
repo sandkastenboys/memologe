@@ -2,5 +2,5 @@
 set -ex
 docker-compose pull
 docker-compose up -d
-sleep 10
+sleep 20
 python3 main.py
