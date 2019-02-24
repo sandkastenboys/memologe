@@ -5,18 +5,16 @@ services:
     image: adminer
     ports:
       - 8080:8080
-    network_mode: "host"
     restart: unless-stopped
 
   db:
     image: mysql
-    command: --default-authentication-plugin=mysql_native_password    
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: 'memes'
       MYSQL_PASSWORD: 'memes_are_the_best'
-      MYSQL_ROOT_PASSWORD: memes_are_the_best      
+      MYSQL_ROOT_PASSWORD: memes_are_the_best
       MYSQL_USER: 'memologe'
     ports:
       - 3307:3306
-    network_mode: "host"
     restart: unless-stopped
