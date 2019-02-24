@@ -16,5 +16,7 @@ services:
       MYSQL_PASSWORD: 'memes_are_the_best'
       MYSQL_ROOT_PASSWORD: memes_are_the_best      
       MYSQL_USER: 'memologe'
+    ports:
+      - 3307:3306
     network_mode: "host"
     restart: unless-stopped
