@@ -7,12 +7,14 @@ class DB:
     def __init__(self):
         self.mydb = pymysql.connect(
             host=config["db_host"],
+            port=config["db_port"],
             user=config["db_user"],
             passwd=config["db_pw"],
             database="memes",
         )
         self.cursor = self.mydb.cursor()
         self.tags = []
+        self.cursor.execute("SET GLOBAL connect_timeout=600")
         try:
             self.cursor.execute(
                 "CREATE TABLE memes( meme_id INTEGER ,link varchar(4096), tags varchar(512), ptime INTEGER , rating INTEGER )")

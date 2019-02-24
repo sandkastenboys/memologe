@@ -1,7 +1,7 @@
-argparse
-telepot
-asyncio
-emoji
-pymysql
-mysql
-discord
+argparse>=0.5.1
+telepot>=12.7
+asyncio>=3.4.3
+emoji>=0.5.1
+pymysql>=0.9.3
+mysql>=0.0.2
+discord>=0.16.12
