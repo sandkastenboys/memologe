@@ -4,17 +4,36 @@ services:
   adminer:
     image: adminer
     ports:
-      - 8080:8080
+      - 8083:8080
     restart: unless-stopped
 
   db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
+    image: mysql #jsurf/rpi-mariadb
     environment:
       MYSQL_DATABASE: 'memes'
       MYSQL_PASSWORD: 'memes_are_the_best'
-      MYSQL_ROOT_PASSWORD: 'memes_are_the_best'
       MYSQL_USER: 'memologe'
+      MYSQL_RANDOM_ROOT_PASSWORD: 1
+
+
     ports:
       - 3307:3306
     restart: unless-stopped
+
+#  memologe:
+#    image: memologe
+#    depends_on:
+#      - db
+#    restart: always
+#    environment:
+#      MYSQL_HOSTNAME: 'db'
+#      MYSQL_USERNAME: 'memologe'
+#      MYSQL_PASSWORD: 'memes_are_the_best'
+#      MYSQL_PORT: 3307
+#      MYSQL_DATABASE: 'memes'
+#      destination: '/app/app/data/'
+#
+#    volumes:
+#      - type: 'bind'
+#        source: '/home/einspaten/hdd/'
+#        target: '/app/app/data/'

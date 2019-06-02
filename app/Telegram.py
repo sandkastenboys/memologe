@@ -1,7 +1,7 @@
 import telepot
 from config import config
 from telepot.loop import MessageLoop
-from Memologe.MySql_DB import db
+from MySql_DB import db
 import random
 import time
 

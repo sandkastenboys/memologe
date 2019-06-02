@@ -1,5 +1,4 @@
-FROM balenalib/armv7hf-alpine:3.9
-FROM python:3
+FROM python:3.7
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -19,12 +18,6 @@ WORKDIR /app
 
 COPY . /app
 
-RUN python3 -m pip install -U discord.py
 RUN pip3 install -r requirements.txt
 
-RUN [ "cross-build-end" ]
-
-
-ENV NAME World
-
-CMD ["python3", "main.py"]
+CMD cd app && python3.7 main.py
