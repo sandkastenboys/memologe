@@ -1,13 +1,13 @@
 import argparse
 import discord
 from config import config
-from MySql_DB import Memes, Tags
-import time
-import random
-from func import random_meme, check_existens, find_link,download
+from db_models import Memes
+from func.search import yield_search
+from func.essentials import post_meme, find_link, yield_random_meme, categorise_meme, list_tags, list_users, history,rate_meme
 from objects import *
 
 last_time = 0
+
 
 class Discord_API(discord.Client):
     def __init__(self):
@@ -15,29 +15,20 @@ class Discord_API(discord.Client):
 
         @self.event
         async def on_ready():
-            pass
-            await self.read_meme_channel()
+            print(config["read_on_start"])
+            if config["read_on_start"] == 'True':
+                await self.read_meme_channel()
 
         @self.event
         async def on_message(message):
             if message.content.startswith(config["key"] + 'ran_meme'):
 
-                try:
-                    how_many = int(message.content.split(" ")[1])
-                    if how_many > 10:
-                        how_many = 10
-                except:
-                    how_many = 1
-
-                for x in range(how_many):
-                    meme = random_meme()
-
-                    await message.channel.send('Here your meme: ' + meme.link)
-
+                for ms in yield_random_meme(message.content):
+                    x = await message.channel.send(ms)
+                    await x.add_reaction(chr(11014))
+                    await x.add_reaction(chr(11015))
 
             if message.content.startswith(config["key"] + 'help'):
-
-
                 await message.channel.send('Memologe Commands:')
                 await message.channel.send(':arrow_right: $post_meme <link> <tags> seperate multiple tags with ;')
                 await message.channel.send(':arrow_right: $ran_meme <how_many> posts random meme')
@@ -46,67 +37,45 @@ class Discord_API(discord.Client):
 
             if message.content.startswith(config["key"] + "search"):
 
-                tags = session.query(Tags).filter_by(tag = message.content.split(" ")[1]).all()
-
-                meme = message.content.split(" ")[2]
-
-                if meme == "": how_many = 1
-                else:
-                    try:
-                        how_many = int(meme)
-                    except:
-                        how_many = 1
-
-                for x in range(how_many):
-
-                    tag = random.choice(tags)
-
-                    meme = session.query(Memes).filter_by(uuid = tag)
-
-                    await message.channel.send(meme.link)
-
+                for ms in yield_search(message.content.split(" ")[1:]):
+                    x = await message.channel.send(ms)
+                    await x.add_reaction(chr(11014))
+                    await x.add_reaction(chr(11015))
 
             if message.content.startswith(config["key"] + "size"):
-                size = session.query(Memes).count()
+                size: int = session.query(Memes).count()
 
                 await message.channel.send("There are : " + str(size) + " memes in the database")
 
             if message.content.startswith(config["key"] + "post_meme"):
+                post_meme(message.content.split(" ")[1], message.content.split(" ")[2], message.author.name, True,
+                          message.created_at)
 
-                meme = message.content.split(" ")[1:]
-                if not check_existens(meme[0]) and type(find_link(meme[0])) is str:
+            if message.content.startswith(config["key"] + "cate_meme"):
+                args: list = message.content.split(" ")[1:]
 
-                    if config["download"] is True:
-                        filename = download(meme[0])
-                    else:
-                        filename = ""
+                categorise_meme(args[0], args[1], message.author.name, True)
 
+            if message.content.startswith(config["key"] + "tags"):
+                await message.channel.send("```" + list_tags() + "```")
 
-                    cm : Memes = Memes.create(meme[0], filename, message.auther.name)
+            if message.content.startswith(config["key"] + "posters"):
+                await message.channel.send("```" + list_users() + "```")
 
-                    if meme[1] != "":
-
-                        tags : list = meme[1].split(";")
-
-                        for tag in tags:
-
-                            Tags.create(cm.uuid, tag)
-
-                    await self.post_meme(meme[0])
-
-                else:
-
-                    await message.channel.send("This Meme already got posted")
-
+            if message.content.startswith(config["key"] + "info"):
+                await message.channel.send(history(message.content.split(" ")[1]))
 
         @self.event
         async def on_reaction_add(reaction, user):
-            if str(user) != "Memologe#3481":
-                # channel = reaction.message.channel
 
-                await reaction.message.clear_reactions()
-                await reaction.message.add_reaction(chr(11014))
-                await reaction.message.add_reaction(chr(11015))
+            if str(user) != config["botname"]:
+                print(user.name,"/", user)
+                meme_id: int = int(reaction.message.content.split(" ")[8])
+
+                if str(reaction) == chr(11014):
+                    rate_meme(meme_id,1, user.name, True)
+                elif str(reaction) == chr(11015):
+                    rate_meme(meme_id, -1, user.name, True)
 
             # await self.send_message(user, "Thx for your rating")
 
@@ -115,24 +84,15 @@ class Discord_API(discord.Client):
             if channel.name == 'memes_lib':
                 await channel.send(link)
 
-    async def read_meme_channel(self): # This Funktion just reads the entire meme channel (not used anylonger)
+    async def read_meme_channel(self):  # This Funktion just reads the entire meme channel (not used anylonger)
 
         for channel in self.get_all_channels():
             if channel.name == 'memes' or channel.name == "cursed-images":
                 await self.prozess(channel)
-
 
     async def prozess(self, channel):
         print("call:", channel)
         async for message in channel.history():
             link = find_link(message.content)
             if type(link) is str:
-                if check_existens(link) is False:
-                    print("added to database:", link)
-                    if config["save"] is True:
-                        filename = download(link)
-                    else:
-                        filename = ""
-                    Memes.create(link, filename, message.author.name)
-
-                   # await self.post_meme(link)
+                post_meme(link, "", message.author.name, True, message.created_at)

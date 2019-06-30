@@ -4,6 +4,7 @@ from subprocess import STDOUT, check_output
 
 timeout = 20
 
+
 def start_bot():
     try:
         check_output(["python3", "main.py"], timeout=timeout)

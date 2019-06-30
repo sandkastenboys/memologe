@@ -20,4 +20,4 @@ COPY . /app
 
 RUN pip3 install -r requirements.txt
 
-CMD cd app && python3.7 main.py
+CMD cd app && echo "start" && python3.7 main.py
