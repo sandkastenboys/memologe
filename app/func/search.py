@@ -27,7 +27,7 @@ def soft_search(tags: list, amount: int):
         count += 1
 
 
-def yield_search(message: str) -> str:  # $search tag1;tag2;tag3 10 1 -> Tags Amount Only
+def yield_search(message: list) -> str:  # $search tag1;tag2;tag3 10 1 -> Tags Amount Only
     possible_tags: list = message[0].split(";")
     # eqivalent to WHERE id IN (..., ..., ...) Tag list
     tags: list = session.query(Tags).filter(Tags.tag.in_(possible_tags)).all()

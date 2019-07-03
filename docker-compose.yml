@@ -6,6 +6,8 @@ services:
     ports:
       - 8083:8080
     restart: unless-stopped
+    networks:
+      - memologe_net
   db:
     image: mysql #jsurf/rpi-mariadb
     environment:
@@ -14,23 +16,39 @@ services:
       MYSQL_USER: 'memologe'
       MYSQL_ROOT_PASSWORD: 'test1'
     ports:
-      - 3307:3306
+      - 127.0.0.1:3306:3306
     restart: unless-stopped
+    networks:
+      - memologe_net
   memologe:
     image: memologe
     depends_on:
       - db
-    restart: always
+    restart: unless-stopped
     environment:
+      debug: 'False'
+      #Mysql Stuff
       MYSQL_HOSTNAME: 'db'
       MYSQL_USERNAME: 'memologe'
       MYSQL_PASSWORD: 'memes_are_the_best'
-      MYSQL_PORT: 3307
+      MYSQL_PORT: 3306
       MYSQL_DATABASE: 'memes'
+      # Core Func.
+      save: 'True'
       destination: '/app/app/data/'
       read_on_start: 'True'
+      #tokens
+      tele_token: '' #Telegram Bot token
+      disc_token: '' #Discord Bot token
+
 
     volumes:
       - type: 'bind'
-        source: '/home/einspaten/hdd/'
+        source: '/mnt/hdd/'
         target: '/app/app/data/'
+    networks:
+      - memologe_net
+      - host
+networks:
+  memologe_net:
+  host:

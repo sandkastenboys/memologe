@@ -3,6 +3,8 @@ from typing import Union, Tuple, List
 
 to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], Tuple[str, bool], any]]] = [
 
+    ("debug", "False"),
+
     # sqlalchemy
     ("MYSQL_HOSTNAME", "db"),
     ("MYSQL_PORT", 3307),
@@ -10,14 +12,20 @@ to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], Tuple[str, bool], an
     ("MYSQL_USERNAME", "memologe"),
     ("MYSQL_PASSWORD", "memes_are_the_best"),  # TODO CHANGE!
 
-    ("tele_token", "778745612:AAHFnKvwmRTvS2wDtBlAvbCHXmHgjum9hYM"),  # Telegram Bot token
-(   "botname", "Memologe#3481"),
+    # core functionality
     ("max_post", 10),
-    ("disc_token", "NTM2NjIxMzc2NjQ4MzgwNDQ1.DyetMw.blkw2eKf4LF_XlUmIgIf2Led470"),  # Discord Bot Token
-    ("key", "$"),
     ("save", True),
-    ("destination", "/home/einspaten/hdd/memes/"),
-    ("read_on_start", "False"),
+    ("destination", "/mnt/hdd/memes/"),
+    ("read_on_start", "True"),
+
+    # discord
+    ("botname", ""),
+    ("key", "$"),
+
+    # tokens
+    ("tele_token", ""),  # Telegram Bot token
+    ("disc_token", ""),  # Discord Bot Token
+
 ]
 
 # the final configuration dict

@@ -88,13 +88,13 @@ class Ratings(Base):
     time_added: Union[datetime.datetime, Column] = Column(Date)
 
     @staticmethod
-    def create(user: int,meme: int, vote: int):
-
-        v: Ratings = Ratings(meme_id=meme, added_by= user, rate=vote, time_added=datetime.datetime.now())
+    def create(user: int, meme: int, vote: int):
+        v: Ratings = Ratings(meme_id=meme, added_by=user, rate=vote, time_added=datetime.datetime.now())
 
         session.add(v)
         session.commit()
 
         return v
+
 
 Base.metadata.create_all(engine)

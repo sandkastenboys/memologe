@@ -16,8 +16,9 @@ LABEL maintainer="Digging Tool <espriworkemail@gmail.com>" \
 
 WORKDIR /app
 
-COPY . /app
-
+COPY requirements.txt /app/requirements.txt
 RUN pip3 install -r requirements.txt
 
-CMD cd app && echo "start" && python3.7 main.py
+COPY . /app
+
+CMD cd app && echo "Memologe ... startup" && python3.7 main.py

@@ -1,10 +1,11 @@
-import argparse
 import discord
 from config import config
 from db_models import Memes
 from func.search import yield_search
-from func.essentials import post_meme, find_link, yield_random_meme, categorise_meme, list_tags, list_users, history,rate_meme
+from func.essentials import post_meme, find_link, yield_random_meme, categorise_meme, list_tags, list_users, history, \
+    rate_meme
 from objects import *
+from func.static import help
 
 last_time = 0
 
@@ -21,6 +22,7 @@ class Discord_API(discord.Client):
 
         @self.event
         async def on_message(message):
+
             if message.content.startswith(config["key"] + 'ran_meme'):
 
                 for ms in yield_random_meme(message.content):
@@ -29,11 +31,7 @@ class Discord_API(discord.Client):
                     await x.add_reaction(chr(11015))
 
             if message.content.startswith(config["key"] + 'help'):
-                await message.channel.send('Memologe Commands:')
-                await message.channel.send(':arrow_right: $post_meme <link> <tags> seperate multiple tags with ;')
-                await message.channel.send(':arrow_right: $ran_meme <how_many> posts random meme')
-                await message.channel.send(':arrow_right: $search <tag> <how_many = 1> searches memes based on tag')
-                await message.channel.send(':arrow_right: $size amount of memes in the db')
+                await message.channel.send(help())
 
             if message.content.startswith(config["key"] + "search"):
 
@@ -69,11 +67,11 @@ class Discord_API(discord.Client):
         async def on_reaction_add(reaction, user):
 
             if str(user) != config["botname"]:
-                print(user.name,"/", user)
+                print(user.name, "/", user)
                 meme_id: int = int(reaction.message.content.split(" ")[8])
 
                 if str(reaction) == chr(11014):
-                    rate_meme(meme_id,1, user.name, True)
+                    rate_meme(meme_id, 1, user.name, True)
                 elif str(reaction) == chr(11015):
                     rate_meme(meme_id, -1, user.name, True)
 
@@ -84,7 +82,7 @@ class Discord_API(discord.Client):
             if channel.name == 'memes_lib':
                 await channel.send(link)
 
-    async def read_meme_channel(self):  # This Funktion just reads the entire meme channel (not used anylonger)
+    async def read_meme_channel(self):
 
         for channel in self.get_all_channels():
             if channel.name == 'memes' or channel.name == "cursed-images":
@@ -95,4 +93,5 @@ class Discord_API(discord.Client):
         async for message in channel.history():
             link = find_link(message.content)
             if type(link) is str:
+                print(link)
                 post_meme(link, "", message.author.name, True, message.created_at)
