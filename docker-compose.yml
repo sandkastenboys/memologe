@@ -36,11 +36,12 @@ services:
       # Core Func.
       save: 'True'
       destination: '/app/app/data/'
-      read_on_start: 'True'
+      read_on_start: 'False'
       #tokens
-      tele_token: '' #Telegram Bot token
-      disc_token: '' #Discord Bot token
-
+      tele_token: '778745612:AAHFnKvwmRTvS2wDtBlAvbCHXmHgjum9hYM' #Telegram Bot token
+      disc_token: 'NTM2NjIxMzc2NjQ4MzgwNDQ1.DyetMw.blkw2eKf4LF_XlUmIgIf2Led470' #Discord Bot token
+      #discord
+      botname: 'Memologe#3481'
 
     volumes:
       - type: 'bind'

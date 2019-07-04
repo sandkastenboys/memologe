@@ -3,7 +3,7 @@ from config import config
 from db_models import Memes
 from func.search import yield_search
 from func.essentials import post_meme, find_link, yield_random_meme, categorise_meme, list_tags, list_users, history, \
-    rate_meme
+    rate_meme, id2meme
 from objects import *
 from func.static import help
 
@@ -63,6 +63,9 @@ class Discord_API(discord.Client):
             if message.content.startswith(config["key"] + "info"):
                 await message.channel.send(history(message.content.split(" ")[1]))
 
+            if message.content.startswith(config["key"] + "id2meme"):
+                await message.channel.send(id2meme(int(message.content.split(" ")[1])))
+
         @self.event
         async def on_reaction_add(reaction, user):
 
@@ -90,7 +93,7 @@ class Discord_API(discord.Client):
 
     async def prozess(self, channel):
         print("call:", channel)
-        async for message in channel.history():
+        async for message in channel.history(limit=10000):
             link = find_link(message.content)
             if type(link) is str:
                 print(link)

@@ -3,7 +3,7 @@ from typing import Union, Tuple, List
 
 to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], Tuple[str, bool], any]]] = [
 
-    ("debug", "False"),
+    ("debug", "True"),
 
     # sqlalchemy
     ("MYSQL_HOSTNAME", "db"),
@@ -16,15 +16,15 @@ to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], Tuple[str, bool], an
     ("max_post", 10),
     ("save", True),
     ("destination", "/mnt/hdd/memes/"),
-    ("read_on_start", "True"),
+    ("read_on_start", "False"),
 
     # discord
-    ("botname", ""),
+    ("botname", "Memologe#3481"),
     ("key", "$"),
 
     # tokens
     ("tele_token", ""),  # Telegram Bot token
-    ("disc_token", ""),  # Discord Bot Token
+    ("disc_token", 'NTM2NjIxMzc2NjQ4MzgwNDQ1.DyetMw.blkw2eKf4LF_XlUmIgIf2Led470'),  # Discord Bot Token
 
 ]
 

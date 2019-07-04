@@ -1,6 +1,6 @@
 import datetime
 from objects import *
-from sqlalchemy import String, Integer, Column, Table, ForeignKey, Boolean, Date
+from sqlalchemy import String, Integer, Column, ForeignKey, Boolean, DateTime
 from typing import Union
 
 
@@ -30,14 +30,14 @@ class Memes(Base):
 
     id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
     link: Union[str, Column] = Column(String(256), unique=True)
-    post_time: Union[datetime.datetime, Column] = Column(Date)
+    post_time: Union[datetime.datetime, Column] = Column(DateTime)
     path: Union[int, Column] = Column(String(45))
     stealer: Union[int, Column] = Column(Integer, ForeignKey('user.user_id'))
 
     @staticmethod
     def create(link, path, stealer, post_time=None) -> 'Memes':
         if post_time is None:
-            post_time = datetime.datetime.now()
+            post_time = datetime.datetime.utcnow()
 
         meme: Memes = Memes(link=link, post_time=post_time, path=path, stealer=stealer)
 
@@ -68,7 +68,7 @@ class Association(Base):
     meme_id: Union[int, Column] = Column(Integer, ForeignKey('meme_list.id'), primary_key=True)
     tag_id: Union[int, Column] = Column(Integer, ForeignKey('tags.id'), primary_key=True)
     added_by: Union[int, Column] = Column(Integer, ForeignKey('user.user_id'))
-    time_added: Union[datetime.datetime, Column] = Column(Date)
+    time_added: Union[datetime.datetime, Column] = Column(DateTime)
 
     @staticmethod
     def create(meme_id: int, tag_id: int, user: int) -> 'Association':
@@ -85,7 +85,7 @@ class Ratings(Base):
     meme_id: Union[int, Column] = Column(Integer, ForeignKey('meme_list.id'), primary_key=True)
     added_by: Union[int, Column] = Column(Integer, ForeignKey('user.user_id'), primary_key=True)
     rate: Union[int, Column] = Column(Integer)
-    time_added: Union[datetime.datetime, Column] = Column(Date)
+    time_added: Union[datetime.datetime, Column] = Column(DateTime)
 
     @staticmethod
     def create(user: int, meme: int, vote: int):

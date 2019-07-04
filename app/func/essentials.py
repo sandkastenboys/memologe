@@ -10,14 +10,10 @@ from datetime import datetime
 
 
 def prep4post(meme: Memes) -> str:
-    if config["debug"] == "False":
-        user: User = id2user(meme.stealer)
-        return 'Here your meme posted by: ' + str(user.username) + ' id = ' + str(meme.id) + ' : ' + ";".join(
-            query_tags(meme.id)) + " " + meme.link
+    user: User = id2user(meme.stealer)
+    return 'Here your meme posted by: ' + str(user.username) + ' id = ' + str(meme.id) + ' : ' + ";".join(
+        query_tags(meme.id)) + " " + meme.link
 
-    else:
-        return 'Here your meme posted by: ' + str(meme.stealer) + ' id = ' + str(meme.id) + ' : ' + ";".join(
-            query_tags(meme.id)) + " " + meme.link
 
 
 def query_tags(meme_id: int) -> List[str]:
@@ -186,15 +182,10 @@ def history(meme_id: str) -> str:
 
     meme: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
 
-    if config["debug"] == "True":
-        ret_val += "```\nPosted by: " + str(meme.stealer) + "\nTime: " + str(meme.post_time) + "\nRating: " + str(
-            sum_ratings(meme.id)) + "\n\n"
-        ret_val += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
-    else:
-        user: User = id2user(meme.stealer)
-        ret_val += "```\nPosted by: " + str(user.username) + "\nTime: " + str(meme.post_time) + "\nRating: " + str(
-            sum_ratings(meme.id)) + "\n\n"
-        ret_val += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
+    user: User = id2user(meme.stealer)
+    ret_val += "```\nPosted by: " + str(user.username) + "\nTime: " + str(meme.post_time) + "\nRating: " + str(
+        sum_ratings(meme.id)) + "\n\n"
+    ret_val += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
 
     tags = session.query(Tags, Association, User).filter(Association.meme_id == int(meme_id),
                                                          Association.tag_id == Tags.id,
@@ -253,3 +244,10 @@ def sum_ratings(meme_id: int) -> int:
 
 def id2user(user_id: int) -> 'User':
     return session.query(User).filter(User.user_id == user_id).first()
+
+def id2meme(meme_id: int) -> str:
+    meme = session.query(Memes).filter(Memes.id == meme_id).first()
+    if meme is None:
+        return "There is no meme with this id"
+    else:
+        return prep4post(meme)
