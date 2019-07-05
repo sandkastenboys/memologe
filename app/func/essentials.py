@@ -8,12 +8,13 @@ from typing import List, Union, NoReturn
 from objects import session
 from datetime import datetime
 
+lowest_best: int = 0
+
 
 def prep4post(meme: Memes) -> str:
     user: User = id2user(meme.stealer)
     return 'Here your meme posted by: ' + str(user.username) + ' id = ' + str(meme.id) + ' : ' + ";".join(
         query_tags(meme.id)) + " " + meme.link
-
 
 
 def query_tags(meme_id: int) -> List[str]:
@@ -244,6 +245,7 @@ def sum_ratings(meme_id: int) -> int:
 
 def id2user(user_id: int) -> 'User':
     return session.query(User).filter(User.user_id == user_id).first()
+
 
 def id2meme(meme_id: int) -> str:
     meme = session.query(Memes).filter(Memes.id == meme_id).first()
