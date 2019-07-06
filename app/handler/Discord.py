@@ -44,7 +44,14 @@ class DiscordAPI(discord.Client):
                 await message.channel.send("There are : " + str(size) + " memes in the database")
 
             if message.content.startswith(config["key"] + "post_meme"):
-                post_meme(message.content.split(" ")[1], message.content.split(" ")[2], message.author.name, 0,
+                link: str = message.content.split(" ")[1]
+                if 'discord' in link:
+                    link: str = link.split("?")[0]
+                if len(link) >= 512:
+                    await message.channel.send("Link is to long. Max length is 512 characters.")
+                    return
+
+                post_meme(link, message.content.split(" ")[2], message.author.name, 0,
                           message.created_at)
 
             if message.content.startswith(config["key"] + "cate_meme"):
@@ -94,7 +101,13 @@ class DiscordAPI(discord.Client):
     async def process(self, channel):
         print("call:", channel)
         async for message in channel.history(limit=10000):
-            link = find_link(message.content)
+            link: Union[str, bool] = find_link(message.content)
+
             if type(link) is str:
+                if 'discord' in link:
+                    link: str = link.split("?")[0]
+                if len(link) >= 512:
+                    continue
+
                 print(link)
                 post_meme(link, "", message.author.name, 0, message.created_at)
