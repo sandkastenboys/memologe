@@ -1,10 +1,9 @@
 dist: xenial
-sudo: required
 language: python
-python: "3.7"
+python: 3.7
 services: 
   - mysql
 cache: pip
-install: pip install -r requirements.txt
+install: pip3 install -r requirements.txt
 script:
   - python3 Memologe_Test.py
