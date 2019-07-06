@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.7-slim
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -13,12 +13,11 @@ LABEL maintainer="Digging Tool <espriworkemail@gmail.com>" \
   org.label-schema.version=$VERSION \
   org.label-schema.schema-version="1.0"
 
+WORKDIR /src
 
-WORKDIR /app
-
-COPY requirements.txt /app/requirements.txt
+COPY requirements.txt /src
 RUN pip3 install -r requirements.txt
 
-COPY . /app
+COPY . /src
 
-CMD cd app && echo "Memologe ... startup" && python3.7 main.py
+CMD ["python3", "./app/main.py"]

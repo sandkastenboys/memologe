@@ -1,33 +1,38 @@
 ---
 version: "3.2"
 services:
-  adminer:
-    image: adminer
-    ports:
-      - 8083:8080
-    restart: unless-stopped
-    networks:
-      - memologe_net
+  # adminer:
+  #   image: adminer
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - memologe
+  #   restart: unless-stopped
+
   db:
-    image: mysql #jsurf/rpi-mariadb
+    image: mysql
+    networks:
+      - memologe
     environment:
       MYSQL_DATABASE: 'memes'
       MYSQL_PASSWORD: 'memes_are_the_best'
       MYSQL_USER: 'memologe'
       MYSQL_ROOT_PASSWORD: 'test1'
-    ports:
-      - 127.0.0.1:3306:3306
     restart: unless-stopped
-    networks:
-      - memologe_net
+
   memologe:
     image: einspaten/memologe
+    build: .
     depends_on:
       - db
-    restart: unless-stopped
+    volumes:
+      - /mnt/hdd/:/app/app/data/
+    networks:
+      - memologe
+      - host
     environment:
       debug: 'False'
-      #Mysql Stuff
+      # Mysql Stuff
       MYSQL_HOSTNAME: 'db'
       MYSQL_USERNAME: 'memologe'
       MYSQL_PASSWORD: 'memes_are_the_best'
@@ -37,19 +42,13 @@ services:
       save: 'True'
       destination: '/app/app/data/'
       read_on_start: 'False'
-      #tokens required
-      tele_token: '' #Telegram Bot token
-      disc_token: '' #Discord Bot token
-      #discord
-      botname: '' # Required for Dicord
+      # Tokens required
+      tele_token: ''
+      disc_token: 'NTM2NjIxMzc2NjQ4MzgwNDQ1.XSCv7g.0sBfBZ0u1DqxeFOvcu8uEQaspE0'
+      # Discord
+      botname: 'Test' # Required for Discord
+    restart: unless-stopped
 
-    volumes:
-      - type: 'bind'
-        source: '/mnt/hdd/'
-        target: '/app/app/data/'
-    networks:
-      - memologe_net
-      - host
 networks:
-  memologe_net:
+  memologe:
   host:
