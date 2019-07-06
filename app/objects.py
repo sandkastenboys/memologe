@@ -1,13 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select
-
-from config import config
 import os
 
-if config["debug"] == "True":  # Sqlite3
+from config import config
+
+if config["sqlite"] == "True":
     engine = create_engine('sqlite:///' + os.path.join("./", "new_db"))
 else:  # Mysql
     print(config["SQLALCHEMY_DATABASE_URI"])

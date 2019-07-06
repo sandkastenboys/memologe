@@ -1,7 +1,7 @@
-from db_models import Memes, Tags, Association, User
+from db_models import Memes, Tags, Association
 from objects import session
 import random
-from typing import List
+from typing import List, Iterator
 from func.essentials import parse_amount, prep4post
 
 
@@ -27,20 +27,20 @@ def soft_search(tags: list, amount: int):
         count += 1
 
 
-def yield_search(message: list) -> str:  # $search tag1;tag2;tag3 10 1 -> Tags Amount Only
+def yield_search(message: list) -> Iterator[str]:  # $search tag1;tag2;tag3 10 1 -> Tags Amount Only
     possible_tags: list = message[0].split(";")
     # eqivalent to WHERE id IN (..., ..., ...) Tag list
     tags: list = session.query(Tags).filter(Tags.tag.in_(possible_tags)).all()
     try:
         amount: int = parse_amount(message[1])
-    except:
-        amount: int = 1
+    except IndexError:
+        amount = 1
     try:
         only_this_tags = message[2]
-    except:
+    except IndexError:
         only_this_tags = "True"
-    for x in range(amount):
 
+    for _ in range(amount):
         if only_this_tags == "False":
             yield "Strict Search not implemented yet"
             break

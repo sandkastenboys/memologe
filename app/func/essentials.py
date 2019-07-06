@@ -1,13 +1,14 @@
 from uuid import uuid4
 from config import config
-from sqlalchemy import func, select
+from sqlalchemy import func
 import requests
 import shutil
 from db_models import Memes, Tags, Association, User, Ratings
-from typing import List, Union, NoReturn
+from typing import List, Union, Iterator
 from objects import session
 from datetime import datetime
 from func.static import resolve_platform
+
 
 def prep4post(meme: Memes) -> str:
     user: User = id2user(meme.stealer)
@@ -24,16 +25,16 @@ def query_tags(meme_id: int) -> List[str]:
 
 def parse_amount(string: str) -> int:
     if string == "":
-        how_many = 1
+        how_many: int = 1
     else:
         try:
-            how_many: int = int(string)
-        except:
-            how_many: int = 1
+            how_many = int(string)
+        except ValueError:
+            how_many = 1
     return how_many
 
 
-def random_meme() -> Union[Memes, str]:
+def random_meme() -> 'Memes':
     meme: Memes = session.query(Memes).order_by(func.random()).first()
 
     if meme is None:
@@ -42,15 +43,16 @@ def random_meme() -> Union[Memes, str]:
     return meme
 
 
-def yield_random_meme(message: str) -> str:
-    try:
+def yield_random_meme(message: str) -> Iterator[str]:
+    message_split = message.split(" ")
+    if len(message_split) > 0:
         how_many: int = int(message.split(" ")[1])
         if how_many > 10:
-            how_many: int = 10
-    except:
-        how_many: int = 1
+            how_many = 10
+    else:
+        how_many = 1
 
-    for x in range(how_many):
+    for _ in range(how_many):
         meme: Memes = random_meme()
         yield prep4post(meme)
 
@@ -67,17 +69,15 @@ def post_meme(link: str, tags: str, author: str, platform: int, posted_at: datet
 
         cm: Memes = Memes.create(link, filename, author_uuid, posted_at)
 
-        if tags != "":
+        if not tags:
+            tag_list: list = tags.split(";")
 
-            tags: list = tags.split(";")
-
-            for tag in tags:
+            for tag in tag_list:
                 tag_id: int = create_tag(tag)
                 create_association(tag_id, cm.id, author_uuid)
 
         return "Thx for your Meme"
     else:
-
         return "This Meme already got posted"
 
 
@@ -90,10 +90,12 @@ def create_tag(tag: str) -> int:
         return db_tag.id
 
 
-def create_association(tag_id: int, meme_id: int, user: int) -> 'Association':
+def create_association(tag_id: int, meme_id: int, user: int):
     assoc: List[Association] = session.query(Association).filter_by(tag_id=tag_id, meme_id=meme_id).first()
     if assoc is None:
         return Association.create(meme_id, tag_id, user)
+    else:
+        return None
 
 
 def download(link: str) -> str:
@@ -105,13 +107,13 @@ def download(link: str) -> str:
                 with open(config["destination"] + filename, 'wb') as f:
                     r.raw.decode_content = True
                     shutil.copyfileobj(r.raw, f)
-            except:
+            except IOError:
                 filename = str(uuid4()) + ".und"
                 with open(config["destination"] + filename, 'wb') as f:
                     r.raw.decode_content = True
                     shutil.copyfileobj(r.raw, f)
-        except:
-            print("Probebly no file behind:", link)
+        except IOError:
+            print("Probably no file behind:", link)
     return filename
 
 
@@ -130,7 +132,7 @@ def find_link(post: str) -> Union[str, bool]:
         ind = post.index("http")
         temp = post[ind:].split(" ")
         return temp[0]
-    except:
+    except ValueError:
         return False
 
 
@@ -146,16 +148,16 @@ def check_auther_registerd(author_name: str, platform: int) -> int:
         return author.user_id
 
 
-def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> NoReturn:
+def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> None:
     auther_uuid: int = check_auther_registerd(author, platform)
 
     cm: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
 
     if tags != "":
 
-        tags: list = tags.split(";")
+        tags_list: list = tags.split(";")
 
-        for tag in tags:
+        for tag in tags_list:
             tag_id: int = create_tag(tag)
             create_association(tag_id, cm.id, auther_uuid)
 
@@ -172,23 +174,21 @@ def list_users() -> str:
     u: List[User] = session.query(User).order_by(User.posts.desc()).all()
     ret_val += "username" + " " * 12 + "platform" + " " * 12 + "interactions" + " " * 8
     for x in range(min(len(u), 10)):
-        ret_val += "\n" + u[x].username + " " * (20 - len(u[x].username)) + str(resolve_platform[u[x].platform]) + " " * (
-                20 - len(str(resolve_platform[u[x].platform]))) + str(u[x].posts)
+        ret_val += "\n" + u[x].username + " " * (20 - len(u[x].username)) + str(
+            resolve_platform[u[x].platform]) + " " * (20 - len(str(resolve_platform[u[x].platform]))) + str(u[x].posts)
     return ret_val
 
 
 def history(meme_id: str) -> str:
-    ret_val: str = ""
-
     meme: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
 
     if meme is None:
         return "Sorry there is no meme with this id yet"
 
     user: User = id2user(meme.stealer)
-    ret_val += "```\nPosted by: " + str(user.username) + "\nTime: " + str(meme.post_time) + "\nRating: " + str(
+    message: str = "\nPosted by: " + str(user.username) + "\nTime: " + str(meme.post_time) + "\nRating: " + str(
         sum_ratings(meme.id)) + "\n\n"
-    ret_val += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
+    message += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
 
     tags = session.query(Tags, Association, User).filter(Association.meme_id == int(meme_id),
                                                          Association.tag_id == Tags.id,
@@ -200,15 +200,13 @@ def history(meme_id: str) -> str:
 
     for x in time_line:
         if x[0] != 0:
-            ret_val += str(x[0].tag) + " " * (20 - len(x[0].tag)) + str(x[2].username) + " " * (
-                    20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time\n"
+            message += str(x[0].tag) + " " * (20 - len(x[0].tag)) + str(x[2].username) + " " * \
+                (20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time"
         else:
-            ret_val += rate2text(x[1].rate) + " " * (20 - len(rate2text(x[1].rate))) + str(x[2].username) + " " * (
-                    20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time\n"
-    #
-    ret_val += "```"
+            message += rate2text(x[1].rate) + " " * (20 - len(rate2text(x[1].rate))) + str(x[2].username) + " " * \
+                (20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time"
 
-    return ret_val
+    return "```\n{}\n```".format(message)
 
 
 def rate2text(vote: int) -> str:
@@ -228,7 +226,7 @@ def sort_by_data(tags, rating) -> list:
     return data
 
 
-def rate_meme(meme_id: int, rate: int, user: str, platform: int) -> NoReturn:
+def rate_meme(meme_id: int, rate: int, user: str, platform: int) -> None:
     author_uuid: int = check_auther_registerd(user, platform)
 
     rat: Ratings = session.query(Ratings).filter(Ratings.added_by == author_uuid, Ratings.meme_id == meme_id).first()

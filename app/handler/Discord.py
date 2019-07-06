@@ -1,16 +1,18 @@
+# pylint: disable=unused-variable
+
 from func.static import help
-from objects import *
+from objects import session
 import discord
 from config import config
 from db_models import Memes
 from func.search import yield_search
-from func.essentials import post_meme, find_link, yield_random_meme, categorise_meme, list_tags, list_users, history,
-rate_meme, id2meme
+from func.essentials import (post_meme, find_link, yield_random_meme, categorise_meme,
+                             list_tags, list_users, history, rate_meme, id2meme)
 
 last_time = 0
 
 
-class Discord_API(discord.Client):
+class DiscordAPI(discord.Client):
     def __init__(self):
         super().__init__()
 
@@ -22,9 +24,7 @@ class Discord_API(discord.Client):
 
         @self.event
         async def on_message(message):
-
             if message.content.startswith(config["key"] + 'ran_meme'):
-
                 for ms in yield_random_meme(message.content):
                     x = await message.channel.send(ms)
                     await x.add_reaction(chr(11014))
@@ -89,9 +89,9 @@ class Discord_API(discord.Client):
 
         for channel in self.get_all_channels():
             if channel.name == 'memes' or channel.name == "cursed-images":
-                await self.prozess(channel)
+                await self.process(channel)
 
-    async def prozess(self, channel):
+    async def process(self, channel):
         print("call:", channel)
         async for message in channel.history(limit=10000):
             link = find_link(message.content)

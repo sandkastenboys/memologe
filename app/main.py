@@ -1,17 +1,13 @@
 from config import config
-from handler.Discord import Discord_API
+from handler.Discord import DiscordAPI
+from handler.Telegram import TelegramAPI
+
 print("Start Memologe ...")
 
-if config["tele_token"] != "":
-    import handler.Telegram
-    pass
-if config["disc_token"] == "":
-    raise ValueError("Discord Token has to ben set")
+if config["telegram_token"]:
+    telegram: TelegramAPI = TelegramAPI()
+    telegram.start()
 
-
-# https://github.com/moby/moby/issues/30757
-
-print("Run Memologe ...")
-
-d: Discord_API = Discord_API()
-d.run(config["disc_token"])
+if config["discord_token"]:
+    discord: DiscordAPI = DiscordAPI()
+    discord.run(config["discord_token"])

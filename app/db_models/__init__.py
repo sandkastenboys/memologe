@@ -1,6 +1,6 @@
 import datetime
-from objects import *
-from sqlalchemy import String, Integer, Column, ForeignKey, Boolean, DateTime
+from objects import Base, engine, session
+from sqlalchemy import String, Integer, Column, ForeignKey, DateTime
 from typing import Union
 
 
@@ -29,7 +29,7 @@ class Memes(Base):
     __tablename__ = "meme_list"
 
     id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
-    link: Union[str, Column] = Column(String(256), unique=True)
+    link: Union[str, Column] = Column(String(512), unique=True)
     post_time: Union[datetime.datetime, Column] = Column(DateTime)
     path: Union[int, Column] = Column(String(45))
     stealer: Union[int, Column] = Column(Integer, ForeignKey('user.user_id'))
@@ -54,8 +54,8 @@ class Tags(Base):
     tag: Union[str, Column] = Column(String(32), unique=True)
 
     @staticmethod
-    def create(tag: str):
-        tag: Tags = Tags(tag=tag)
+    def create(a_tag: str):
+        tag: Tags = Tags(tag=a_tag)
 
         session.add(tag)
         session.commit()
