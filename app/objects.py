@@ -1,9 +1,9 @@
+import os
 from sqlalchemy import create_engine
+from sqlalchemy import select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select
-import os
 
 from config import config
 
@@ -14,8 +14,9 @@ else:  # Mysql
     engine = create_engine(config["SQLALCHEMY_DATABASE_URI"])
 
 Session: sessionmaker = sessionmaker(bind=engine)
-
 Base: DeclarativeMeta = declarative_base()
+
+
 session = Session()
 connection = session.connection()
 
@@ -31,6 +32,6 @@ def check_mysql_connection():
     try:
         connection.scalar(select([1]))
         return
-    except:
+    except TypeError:  # FIXME put correct exception
         print("Connection Timeout")
     reload()

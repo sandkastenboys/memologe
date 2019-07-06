@@ -1,8 +1,9 @@
-from db_models import Memes, Tags, Association
-from objects import session
 import random
-from typing import List, Iterator
+
+from db_models import Memes, Tags, Association
 from func.essentials import parse_amount, prep4post
+from objects import session
+from typing import List, Iterator
 
 
 def strict_search(tags: list, amount: int):

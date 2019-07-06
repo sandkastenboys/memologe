@@ -1,13 +1,14 @@
-from uuid import uuid4
-from config import config
-from sqlalchemy import func
 import requests
 import shutil
-from db_models import Memes, Tags, Association, User, Ratings
-from typing import List, Union, Iterator
-from objects import session
 from datetime import datetime
+from sqlalchemy import func
+from typing import List, Union, Iterator
+from uuid import uuid4
+
+from config import config
+from db_models import Memes, Tags, Association, User, Ratings
 from func.static import resolve_platform
+from objects import session
 
 
 def prep4post(meme: Memes) -> str:

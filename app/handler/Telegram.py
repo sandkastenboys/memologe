@@ -1,14 +1,15 @@
 import datetime
-from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
-from objects import session
-from func.static import help
-from func.search import yield_search
 import telepot
-from config import config
+from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 from telepot.loop import MessageLoop
+
+from config import config
 from db_models import Memes
+from objects import session
 from func.essentials import (yield_random_meme, list_tags, list_users, rate_meme,
                              history, post_meme, id2meme, categorise_meme)
+from func.search import yield_search
+from func.static import help
 
 keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='UpVote', callback_data='UpVote'),
