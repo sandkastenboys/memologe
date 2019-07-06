@@ -1,5 +1,13 @@
 ---
 version: "3.2"
+
+volumes:
+  db:
+
+networks:
+  memologe:
+  host:
+
 services:
   # adminer:
   #   image: adminer
@@ -10,14 +18,16 @@ services:
   #   restart: unless-stopped
 
   db:
-    image: mysql
+    image: mariadb
+    volumes:
+      - db:/var/lib/mysql
     networks:
       - memologe
     environment:
-      MYSQL_DATABASE: 'memes'
-      MYSQL_PASSWORD: 'memes_are_the_best'
-      MYSQL_USER: 'memologe'
-      MYSQL_ROOT_PASSWORD: 'test1'
+      MYSQL_DATABASE: memes
+      MYSQL_PASSWORD: memes_are_the_best
+      MYSQL_USER: memologe
+      MYSQL_ROOT_PASSWORD: test1
     restart: unless-stopped
 
   memologe:
@@ -33,22 +43,18 @@ services:
     environment:
       debug: 'False'
       # Mysql Stuff
-      MYSQL_HOSTNAME: 'db'
-      MYSQL_USERNAME: 'memologe'
-      MYSQL_PASSWORD: 'memes_are_the_best'
+      MYSQL_HOSTNAME: db
+      MYSQL_USERNAME: memologe
+      MYSQL_PASSWORD: memes_are_the_best
       MYSQL_PORT: 3306
-      MYSQL_DATABASE: 'memes'
+      MYSQL_DATABASE: memes
       # Core Func.
       save: 'True'
-      destination: '/app/app/data/'
-      read_on_start: 'False'
+      destination: /app/app/data/
+      read_on_start: 'True'
       # Tokens required
-      tele_token: ''
-      disc_token: 'NTM2NjIxMzc2NjQ4MzgwNDQ1.XSCv7g.0sBfBZ0u1DqxeFOvcu8uEQaspE0'
+      tele_token:
+      disc_token: NTM2NjIxMzc2NjQ4MzgwNDQ1.XSCv7g.0sBfBZ0u1DqxeFOvcu8uEQaspE0
       # Discord
-      botname: 'Test' # Required for Discord
+      botname: Test # Required for Discord
     restart: unless-stopped
-
-networks:
-  memologe:
-  host:
