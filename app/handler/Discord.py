@@ -37,8 +37,7 @@ class Discord_API(discord.Client):
 
                 for ms in yield_search(message.content.split(" ")[1:]):
                     x = await message.channel.send(ms)
-                    await x.add_reaction(chr(11014))
-                    await x.add_reaction(chr(11015))
+
 
             if message.content.startswith(config["key"] + "size"):
                 size: int = session.query(Memes).count()
@@ -46,13 +45,13 @@ class Discord_API(discord.Client):
                 await message.channel.send("There are : " + str(size) + " memes in the database")
 
             if message.content.startswith(config["key"] + "post_meme"):
-                post_meme(message.content.split(" ")[1], message.content.split(" ")[2], message.author.name, True,
+                post_meme(message.content.split(" ")[1], message.content.split(" ")[2], message.author.name, 0,
                           message.created_at)
 
             if message.content.startswith(config["key"] + "cate_meme"):
                 args: list = message.content.split(" ")[1:]
 
-                categorise_meme(args[0], args[1], message.author.name, True)
+                categorise_meme(args[0], args[1], message.author.name, 0)
 
             if message.content.startswith(config["key"] + "tags"):
                 await message.channel.send("```" + list_tags() + "```")
@@ -64,7 +63,9 @@ class Discord_API(discord.Client):
                 await message.channel.send(history(message.content.split(" ")[1]))
 
             if message.content.startswith(config["key"] + "id2meme"):
-                await message.channel.send(id2meme(int(message.content.split(" ")[1])))
+                x = await message.channel.send(id2meme(int(message.content.split(" ")[1])))
+                await x.add_reaction(chr(11014))
+                await x.add_reaction(chr(11015))
 
         @self.event
         async def on_reaction_add(reaction, user):
@@ -74,9 +75,9 @@ class Discord_API(discord.Client):
                 meme_id: int = int(reaction.message.content.split(" ")[8])
 
                 if str(reaction) == chr(11014):
-                    rate_meme(meme_id, 1, user.name, True)
+                    rate_meme(meme_id, 1, user.name, 0)
                 elif str(reaction) == chr(11015):
-                    rate_meme(meme_id, -1, user.name, True)
+                    rate_meme(meme_id, -1, user.name, 0)
 
             # await self.send_message(user, "Thx for your rating")
 
@@ -97,4 +98,4 @@ class Discord_API(discord.Client):
             link = find_link(message.content)
             if type(link) is str:
                 print(link)
-                post_meme(link, "", message.author.name, True, message.created_at)
+                post_meme(link, "", message.author.name, 0, message.created_at)

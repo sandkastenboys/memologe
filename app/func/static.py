@@ -1,3 +1,10 @@
+from typing import Dict
+
+
+resolve_platform: Dict[int, str] = {
+    0 : "Discord",
+    1 : "Telegram"
+}
 
 
 def help() -> str:
@@ -10,7 +17,8 @@ def help() -> str:
         "- $size                            amount of memes in the db\n"\
         "- $info <id>                       returns relevant information about the meme with this id\n"\
         "- $posters                         returns list of most active users of this bot\n"\
-        "- $tags                            returns all tags in the database\n\n"\
+        "- $tags                            returns all tags in the database\n"\
+        "- $id2meme                         returns meme with this id\n\n"\
         "Example Meme Post:\n$post_meme https://cdn.discordapp.com/attachments/344431213550764034/589167907070804009/64587415_744264206054251_7518656262456737792_n.png school;kid;skyrim;100\n\n"\
         "Example Categorise Meme:\n"\
         "$cate_meme 23 minecraft;engineer\n\n"\

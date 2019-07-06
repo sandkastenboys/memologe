@@ -7,9 +7,7 @@ from db_models import Memes, Tags, Association, User, Ratings
 from typing import List, Union, NoReturn
 from objects import session
 from datetime import datetime
-
-lowest_best: int = 0
-
+from func.static import resolve_platform
 
 def prep4post(meme: Memes) -> str:
     user: User = id2user(meme.stealer)
@@ -57,12 +55,12 @@ def yield_random_meme(message: str) -> str:
         yield prep4post(meme)
 
 
-def post_meme(link: str, tags: str, author: str, platform: bool, posted_at: datetime) -> str:
+def post_meme(link: str, tags: str, author: str, platform: int, posted_at: datetime) -> str:
     if not check_existens(link) and type(find_link(link)) is str:
 
         author_uuid: int = check_auther_registerd(author, platform)
 
-        if config["save"] is True:
+        if config["save"] == "True":
             filename = download(link)
         else:
             filename = ""
@@ -136,7 +134,7 @@ def find_link(post: str) -> Union[str, bool]:
         return False
 
 
-def check_auther_registerd(author_name: str, platform: bool) -> int:
+def check_auther_registerd(author_name: str, platform: int) -> int:
     author: User = session.query(User).filter_by(username=author_name, platform=platform).first()
 
     if author is None:
@@ -148,7 +146,7 @@ def check_auther_registerd(author_name: str, platform: bool) -> int:
         return author.user_id
 
 
-def categorise_meme(meme_id: int, tags: str, author: str, platform: bool) -> NoReturn:
+def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> NoReturn:
     auther_uuid: int = check_auther_registerd(author, platform)
 
     cm: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
@@ -172,9 +170,10 @@ def list_tags() -> str:
 def list_users() -> str:
     ret_val: str = ""
     u: List[User] = session.query(User).order_by(User.posts.desc()).all()
+    ret_val += "username" + " " * 12 + "platform" + " " * 12 + "interactions" + " " * 8
     for x in range(min(len(u), 10)):
-        ret_val += "\n" + u[x].username + " " * (20 - len(u[x].username)) + str(u[x].platform) + " " * (
-                20 - len(str(u[x].platform))) + str(u[x].posts)
+        ret_val += "\n" + u[x].username + " " * (20 - len(u[x].username)) + str(resolve_platform[u[x].platform]) + " " * (
+                20 - len(str(resolve_platform[u[x].platform]))) + str(u[x].posts)
     return ret_val
 
 
@@ -182,6 +181,9 @@ def history(meme_id: str) -> str:
     ret_val: str = ""
 
     meme: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
+
+    if meme is None:
+        return "Sorry there is no meme with this id yet"
 
     user: User = id2user(meme.stealer)
     ret_val += "```\nPosted by: " + str(user.username) + "\nTime: " + str(meme.post_time) + "\nRating: " + str(
@@ -197,13 +199,12 @@ def history(meme_id: str) -> str:
     time_line = sort_by_data(tags, ratig)
 
     for x in time_line:
-        print(x[2].username)
         if x[0] != 0:
             ret_val += str(x[0].tag) + " " * (20 - len(x[0].tag)) + str(x[2].username) + " " * (
-                    20 - len(str(x[2].username))) + str(x[1].time_added) + "\n"
+                    20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time\n"
         else:
             ret_val += rate2text(x[1].rate) + " " * (20 - len(rate2text(x[1].rate))) + str(x[2].username) + " " * (
-                    20 - len(str(x[2].username))) + str(x[1].time_added) + "\n"
+                    20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time\n"
     #
     ret_val += "```"
 
@@ -223,11 +224,11 @@ def sort_by_data(tags, rating) -> list:
         print(rat.added_by, use.user_id, use.username)
         data.append((0, rat, use))
     data += tags
-    data.sort(key=lambda date: datetime.strptime(str(date[1].time_added), "%Y-%m-%d"))
+    data.sort(key=lambda date: datetime.strptime(str(date[1].time_added), "%Y-%m-%d %H:%M:%S"))
     return data
 
 
-def rate_meme(meme_id: int, rate: int, user: str, platform: bool) -> NoReturn:
+def rate_meme(meme_id: int, rate: int, user: str, platform: int) -> NoReturn:
     author_uuid: int = check_auther_registerd(user, platform)
 
     rat: Ratings = session.query(Ratings).filter(Ratings.added_by == author_uuid, Ratings.meme_id == meme_id).first()

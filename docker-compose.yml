@@ -21,7 +21,7 @@ services:
     networks:
       - memologe_net
   memologe:
-    image: memologe
+    image: einspaten/memologe
     depends_on:
       - db
     restart: unless-stopped
@@ -37,11 +37,11 @@ services:
       save: 'True'
       destination: '/app/app/data/'
       read_on_start: 'False'
-      #tokens
+      #tokens required
       tele_token: '' #Telegram Bot token
       disc_token: '' #Discord Bot token
       #discord
-      botname: ''
+      botname: '' # Required for Dicord
 
     volumes:
       - type: 'bind'

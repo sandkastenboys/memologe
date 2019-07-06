@@ -49,14 +49,13 @@ def handle(message):
         bot.sendMessage(chat_id, history(message.split(" ")[1]), parse_mode='Markdown')
 
     if message.startswith("/post_meme"):
-        post_meme(message.split(" ")[1], message.content.split(" ")[2], user, False,
+        post_meme(message.split(" ")[1], message.split(" ")[2], user, 1,
                   datetime.datetime.utcnow())
     if message.startswith("/id2meme"):
         bot.sendMessage(chat_id, id2meme(int(message.split(" ")[1])), reply_markup = keyboard)
     if message.startswith("/cate_meme"):
         args: list = message.split(" ")[1:]
-
-        categorise_meme(args[0], args[1], user, False)
+        categorise_meme(args[0], args[1], user, 1)
 
 def query(message):
     query_id, from_id, query_data = telepot.glance(message, flavor='callback_query')
@@ -66,9 +65,9 @@ def query(message):
     meme_id: int = int(message["message"]["text"].split(" ")[8])
 
     if rating == "UpVote":
-        rate_meme(int(meme_id), 1, username, False)
+        rate_meme(int(meme_id), 1, username, 1)
     elif rating == "DownVote":
-        rate_meme(int(meme_id), -1, username, False)
+        rate_meme(int(meme_id), -1, username, 1)
 
     bot.answerCallbackQuery(query_id, text="thanks for your rating (" + rating + "/" + str(meme_id) + ")")
 

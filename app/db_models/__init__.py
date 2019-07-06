@@ -7,13 +7,13 @@ from typing import Union
 class User(Base):
     __tablename__ = "user"
 
-    platform: Union[bool, Column] = Column(Boolean)  # True -> Dicord, False -> Telegram
+    platform: Union[bool, int] = Column(Integer)  # 0 -> Discord, 1 -> Telegram ... maybe other platforms added later
     user_id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
     username: Union[str, Column] = Column(String(32))
     posts: Union[int, Column] = Column(Integer)  # Could be counted but we want to save performance
 
     @staticmethod
-    def create(platform: bool, username: str) -> 'User':
+    def create(platform: int, username: str) -> 'User':
         user: User = User(platform=platform, username=username, posts=0)
         session.add(user)
         session.commit()
