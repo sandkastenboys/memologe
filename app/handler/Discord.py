@@ -1,11 +1,11 @@
+from func.static import help
+from objects import *
 import discord
 from config import config
 from db_models import Memes
 from func.search import yield_search
-from func.essentials import post_meme, find_link, yield_random_meme, categorise_meme, list_tags, list_users, history, \
-    rate_meme, id2meme
-from objects import *
-from func.static import help
+from func.essentials import post_meme, find_link, yield_random_meme, categorise_meme, list_tags, list_users, history,
+rate_meme, id2meme
 
 last_time = 0
 
@@ -37,7 +37,6 @@ class Discord_API(discord.Client):
 
                 for ms in yield_search(message.content.split(" ")[1:]):
                     x = await message.channel.send(ms)
-
 
             if message.content.startswith(config["key"] + "size"):
                 size: int = session.query(Memes).count()

@@ -1,7 +1,7 @@
 import os
 from typing import Union, Tuple, List
 
-to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], Tuple[str, bool], any]]] = [
+to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], any]]] = [
 
     ("debug", "False"),
 
@@ -42,6 +42,6 @@ for key in to_load:
         config[key] = os.environ.get(key)
 
 # set sqlalchemy database connection uri
-config["SQLALCHEMY_DATABASE_URI"]: str = \
-    f"mysql+pymysql://{config['MYSQL_USERNAME']}:{config['MYSQL_PASSWORD']}@" \
+config["SQLALCHEMY_DATABASE_URI"]:
+    str = f"mysql+pymysql://{config['MYSQL_USERNAME']}:{config['MYSQL_PASSWORD']}@" \
         f"{config['MYSQL_HOSTNAME']}:{config['MYSQL_PORT']}/{config['MYSQL_DATABASE']}"

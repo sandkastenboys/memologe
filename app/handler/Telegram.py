@@ -1,14 +1,15 @@
+import datetime
+from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
+from objects import session
+from func.static import help
+from func.search import yield_search
 import telepot
 from config import config
 from telepot.loop import MessageLoop
 from db_models import Memes
 import random
-from func.essentials import yield_random_meme, list_tags, list_users, rate_meme, history, post_meme, id2meme, categorise_meme
-from func.search import yield_search
-from func.static import help
-from objects import session
-from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
-import datetime
+from func.essentials import yield_random_meme, list_tags, list_users, rate_meme, history, post_meme, id2meme,
+categorise_meme
 
 keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='UpVote', callback_data='UpVote'),
@@ -52,10 +53,11 @@ def handle(message):
         post_meme(message.split(" ")[1], message.split(" ")[2], user, 1,
                   datetime.datetime.utcnow())
     if message.startswith("/id2meme"):
-        bot.sendMessage(chat_id, id2meme(int(message.split(" ")[1])), reply_markup = keyboard)
+        bot.sendMessage(chat_id, id2meme(int(message.split(" ")[1])), reply_markup=keyboard)
     if message.startswith("/cate_meme"):
         args: list = message.split(" ")[1:]
         categorise_meme(args[0], args[1], user, 1)
+
 
 def query(message):
     query_id, from_id, query_data = telepot.glance(message, flavor='callback_query')
