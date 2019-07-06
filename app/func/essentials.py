@@ -60,7 +60,7 @@ def post_meme(link: str, tags: str, author: str, platform: int, posted_at: datet
 
         author_uuid: int = check_auther_registerd(author, platform)
 
-        if config["save"] == "True":
+        if config["save_memes_to_disc"] == "True":
             filename = download(link)
         else:
             filename = ""

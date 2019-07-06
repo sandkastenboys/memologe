@@ -49,7 +49,7 @@ services:
       MYSQL_PORT: 3306
       MYSQL_DATABASE: memes
       # Core Func.
-      save: 'True'
+      save_memes_to_disc: 'True'
       destination: /app/app/data/
       read_on_start: 'True'
       # Tokens required
