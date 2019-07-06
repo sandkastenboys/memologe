@@ -54,7 +54,7 @@ services:
       read_on_start: 'True'
       # Tokens required
       tele_token:
-      disc_token: NTM2NjIxMzc2NjQ4MzgwNDQ1.XSCv7g.0sBfBZ0u1DqxeFOvcu8uEQaspE0
+      disc_token:
       # Discord
       botname: Test # Required for Discord
     restart: unless-stopped
