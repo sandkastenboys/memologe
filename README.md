@@ -8,14 +8,14 @@ Meme Bot for Discord and Telegram
 
 Coming Soon ...
 
-##Installation
+## Setup
 
 This is a server application so it only runs on linux.
 
 ```sybase
 $ git clone https://github.com/SpartanerSpaten/Memologe.git
 ```
-Via Docker
+Via ![Docker](https://hub.docker.com/r/einspaten/memologe)
 
 ```sybase
 $ cd Memologe
@@ -54,4 +54,4 @@ This bot allows you too download your memes and save it an e.g an external hard 
 
 ## Bug Reports
 
--> go here: https://spartanerspaten.github.io/#contact
+Create an ![ISSUE](https://github.com/SpartanerSpaten/Memologe/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
