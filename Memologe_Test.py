@@ -7,7 +7,8 @@ timeout = 20
 
 def start_bot():
     try:
-        check_output(["python3", "main.py"], timeout=timeout)
+        os.system("ls .")
+        check_output(["python3", "./app/main.py"], timeout=timeout)
     except subprocess.TimeoutExpired as timeout_e:
         print("Success")
     except subprocess.CalledProcessError as e:

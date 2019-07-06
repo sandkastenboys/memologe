@@ -3,14 +3,14 @@ from typing import Union, Tuple, List
 
 to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], Tuple[str, bool], any]]] = [
 
-    ("debug", "True"),
+    ("debug", "False"),
 
     # sqlalchemy
-    ("MYSQL_HOSTNAME", "db"),
-    ("MYSQL_PORT", 3307),
+    ("MYSQL_HOSTNAME", "127.0.0.1"),
+    ("MYSQL_PORT", 3306),
     ("MYSQL_DATABASE", "memes"),
-    ("MYSQL_USERNAME", "memologe"),
-    ("MYSQL_PASSWORD", "memes_are_the_best"),  # TODO CHANGE!
+    ("MYSQL_USERNAME", "travis"),
+    ("MYSQL_PASSWORD", ""),
 
     # core functionality
     ("max_post", 10),

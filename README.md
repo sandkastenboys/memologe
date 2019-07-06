@@ -2,6 +2,7 @@
 Meme Bot for Discord and Telegram
 
 ![Docker Build](https://img.shields.io/docker/automated/einspaten/memologe.svg?style=popout)
+![Travis](https://img.shields.io/travis/com/SpartanerSpaten/memologe.svg?color=green&label=Travis&style=popout)
 
 ## Add bot to your Group / Discord Server
 
