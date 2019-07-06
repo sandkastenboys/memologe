@@ -1,5 +1,4 @@
-FROM balenalib/armv7hf-alpine:3.9
-FROM python:3
+FROM python:3.7
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -17,14 +16,9 @@ LABEL maintainer="Digging Tool <espriworkemail@gmail.com>" \
 
 WORKDIR /app
 
-COPY . /app
-
-RUN python3 -m pip install -U discord.py
+COPY requirements.txt /app/requirements.txt
 RUN pip3 install -r requirements.txt
 
-RUN [ "cross-build-end" ]
+COPY . /app
 
-
-ENV NAME World
-
-CMD ["python3", "main.py"]
+CMD cd app && echo "Memologe ... startup" && python3.7 main.py

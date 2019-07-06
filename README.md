@@ -1,38 +1,57 @@
 # Memologe
-Meme Bot for Discord
+Meme Bot for Discord and Telegram
 
+![Docker Build](https://img.shields.io/docker/automated/einspaten/memologe.svg?style=popout)
+![Travis](https://img.shields.io/travis/com/SpartanerSpaten/memologe.svg?color=green&label=Travis&style=popout)
 
-### Installation
+## Add bot to your Group / Discord Server
 
-```sysbash
+Coming Soon ...
+
+##Installation
+
+This is a server application so it only runs on linux.
+
+```sybase
 $ git clone https://github.com/SpartanerSpaten/Memologe.git
 ```
+Via Docker
 
-Setup MySql
-
-```sysbash
-$ sudo apt-get install mysql
+```sybase
+$ cd Memologe
+$ nano docker-compose.yml //enter your tokens and configure the bot
+$ ./start.sh
 ```
 
-Go here for setup your DB
+## Features
 
-https://gist.github.com/SpartanerSpaten/20ecb59b082022103bbbfabe4aa4a24e
+#### Commands
+    
+  !Warning! in Telegram "/" replaces your command key ($).  
+    
+  - **$post_meme <link> <tags>**         
+  seperate multiple tags with ';'
+  - **$ran_meme <how_many = 1>**         
+  posts random meme
+  - **$cate_meme <id> <tags>**           
+  adds these tags to the meme so that it can be found more easily
+  - **$search <tag> <how_many = 1>**     
+  searches memes based on tag
+  - **$size**                            
+  amount of memes in the db
+  - **$info <id>**                       
+  returns relevant information about the meme with this id
+  - **$posters**                         
+  returns list of most active users of this bot
+  - **$tags**                            
+  returns all tags in the database
+  - **$id2meme <id>**
+  returns meme with this id
+ 
+You also can rate memes by pressing downVote / UpVote or the corresponding arrow emoji.
 
-And dont forget to change the config.
+This bot allows you too download your memes and save it an e.g an external hard drive.
 
+## Bug Reports
 
-### Run / Deployment
-
-
-Screen use full Prozess Manager.
-https://wiki.ubuntuusers.de/Screen/
-
-
-```sysbash
-python3 main.py
-```
-
-https://cloud.docker.com/repository/docker/einspaten/memologe
-(You have to request access)
-
-There is also a Travis entry.
+-> go here: https://spartanerspaten.github.io/#contact

@@ -4,17 +4,52 @@ services:
   adminer:
     image: adminer
     ports:
-      - 8080:8080
+      - 8083:8080
     restart: unless-stopped
-
+    networks:
+      - memologe_net
   db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
+    image: mysql #jsurf/rpi-mariadb
     environment:
       MYSQL_DATABASE: 'memes'
       MYSQL_PASSWORD: 'memes_are_the_best'
-      MYSQL_ROOT_PASSWORD: 'memes_are_the_best'
       MYSQL_USER: 'memologe'
+      MYSQL_ROOT_PASSWORD: 'test1'
     ports:
-      - 3307:3306
+      - 127.0.0.1:3306:3306
     restart: unless-stopped
+    networks:
+      - memologe_net
+  memologe:
+    image: einspaten/memologe
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      debug: 'False'
+      #Mysql Stuff
+      MYSQL_HOSTNAME: 'db'
+      MYSQL_USERNAME: 'memologe'
+      MYSQL_PASSWORD: 'memes_are_the_best'
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: 'memes'
+      # Core Func.
+      save: 'True'
+      destination: '/app/app/data/'
+      read_on_start: 'False'
+      #tokens required
+      tele_token: '' #Telegram Bot token
+      disc_token: '' #Discord Bot token
+      #discord
+      botname: '' # Required for Dicord
+
+    volumes:
+      - type: 'bind'
+        source: '/mnt/hdd/'
+        target: '/app/app/data/'
+    networks:
+      - memologe_net
+      - host
+networks:
+  memologe_net:
+  host:
