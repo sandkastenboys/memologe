@@ -1,3 +1,4 @@
+import emoji
 import requests
 import shutil
 from datetime import datetime
@@ -204,17 +205,19 @@ def history(meme_id: str) -> str:
             message += str(x[0].tag) + " " * (20 - len(x[0].tag)) + str(x[2].username) + " " * \
                 (20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time"
         else:
-            message += rate2text(x[1].rate) + " " * (20 - len(rate2text(x[1].rate))) + str(x[2].username) + " " * \
+            message += rate_to_text(x[1].rate) + " " * (20 - len(rate_to_text(x[1].rate))) + str(x[2].username) + " " * \
                 (20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time"
 
     return "```\n{}\n```".format(message)
 
 
-def rate2text(vote: int) -> str:
+def rate_to_text(vote: int) -> str:
     if vote == 1:
-        return "__upvote__"
+        return emoji.emojize(':arrow_up:')
+    elif vote == -1:
+        return emoji.emojize(':arrow_down:')
     else:
-        return "__downvote__"
+        raise ValueError
 
 
 def sort_by_data(tags, rating) -> list:
