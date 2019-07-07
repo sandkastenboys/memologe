@@ -53,7 +53,7 @@ services:
       destination: /app/app/data/
       read_on_start: 'True'
       # Tokens required
-      telegram_token:
+      telegram_token: 
       discord_token:
       # Discord
       botname: Test # Required for Discord

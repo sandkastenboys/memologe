@@ -201,8 +201,8 @@ def list_users() -> str:
     return ret_val
 
 
-def history(meme_id: str) -> str:
-    meme: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
+def history(meme_id: int) -> str:
+    meme: Memes = session.query(Memes).filter(Memes.id == meme_id).first()
 
     if meme is None:
         return "Sorry there is no meme with this id yet"
@@ -229,7 +229,6 @@ def history(meme_id: str) -> str:
     )
 
     time_line = sort_by_data(tags, ratig)
-
     for x in time_line:
         username: str = x[2].username
         if x[0] == 0:
@@ -277,11 +276,10 @@ def sort_by_data(tags, rating) -> list:
 def rate_meme(meme_id: int, rate: int, user: str, platform: int) -> None:
     author_uuid: int = check_auther_registerd(user, platform)
 
-    rat: Ratings = session.query(Ratings).filter(
+    rating: Ratings = session.query(Ratings).filter(
         Ratings.added_by == author_uuid, Ratings.meme_id == meme_id
     ).first()
-
-    if rat is None:
+    if not rating:
         Ratings.create(author_uuid, meme_id, rate)
 
 

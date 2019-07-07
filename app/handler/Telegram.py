@@ -1,114 +1,221 @@
-import datetime
-import telepot
-from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
-from telepot.loop import MessageLoop
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+from telegram.bot import Bot
+from telegram.update import Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext.dispatcher import run_async
+from telegram.message import Message
+from typing import List, Callable, Union, Tuple
 
 from config import config
-from db_models import Memes
 from objects import session
+from db_models import Memes
+from func.static import show_help
 from func.essentials import (
     add_meme,
-    categorise_meme,
-    history,
-    id_to_meme,
+    yield_random_meme,
     list_tags,
+    id_to_meme,
+    categorise_meme,
     list_users,
     rate_meme,
-    yield_random_meme,
+    history,
 )
 from func.search import yield_search
-from func.static import show_help
 
-keyboard = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text="UpVote", callback_data="UpVote"),
-            InlineKeyboardButton(text="DownVote", callback_data="DownVote"),
-        ]
+keyboard = [
+    [InlineKeyboardButton("UpVote", callback_data="UpVote")],
+    [InlineKeyboardButton("DownVote", callback_data="DownVote")],
+]
+keyboard_markup = InlineKeyboardMarkup(keyboard)
+
+
+def parse_count(args: List[str], position: int, default: int = 1) -> Tuple[int, str]:
+    if len(args) < position + 1:
+        count: int = default
+    elif len(args) >= position and args[position].isdigit():
+        count: int = abs(int(args[0]))
+    else:
+        return (0, str(position) + " argument should be an positive integer")
+    return (count, "")
+
+
+@run_async
+def post_meme(bot: Bot, update: Update, args: List[str]):
+    message: Message = update.message
+
+    if len(args) == 0:
+        message.reply_text("You have to at least give a link")
+        return
+
+    link: str = args[0]
+
+    if len(args) == 1:
+        post_tags: str = ""
+    else:
+        post_tags: str = args[1]
+
+    message.reply_text(
+        add_meme(
+            link, post_tags, message.from_user.username, 1, message.date
+        )
+    )
+
+
+@run_async
+def random(bot: Bot, update: Update, args: List[str]):
+    message: Message = update.message
+
+    number: Tuple[int, str] = parse_count(args, 0)
+    if number[1]:
+        message.reply_text(number[1])
+        return
+
+    count: int = number[0]
+
+    for msg in yield_random_meme(count):
+        message.reply_text(msg, reply_markup=keyboard_markup)
+
+
+@run_async
+def userhelp(bot: Bot, update: Update, args: List[str]):
+    update.message.reply_text(show_help(), parse_mode="Markdown")
+
+
+@run_async
+def _size(bot: Bot, update: Update, args: List[str]):
+
+    size: int = session.query(Memes).count()
+    update.message.reply_text(
+        "There are : {} memes in the database".format(size), parse_mode="Markdown"
+    )
+
+
+@run_async
+def search(bot: Bot, update: Update, args: List[str]):
+    message: Message = update.message
+    if len(args) < 2:
+        count: int = 1
+    elif args[1].isdigit():
+        if int(args[1]) < 0:
+            message.reply_text("Your given number is below 0")
+            return
+        else:
+            count: int = int(args[1])
+    else:
+        count: int = 1
+    tags = args[0]
+
+    print("Searching for {} of {}".format(count, tags))
+    for msg in yield_search(tags, count):
+        message.reply_text(msg, reply_markup=keyboard_markup)
+
+
+@run_async
+def _tags(bot: Bot, update: Update, args: List[str]):
+    message: Message = update.message
+    tags: str = list_tags()
+    if tags.isspace():
+        message.reply_text("There are no tags in the database.")
+    else:
+        message.reply_text("```{}```".format(tags), parse_mode="Markdown")
+
+
+def posters(bot: Bot, update: Update, args: List[str]) -> None:
+    message: Message = update.message
+    users: str = list_users()
+    if users:
+        message.reply_text("```{}```".format(users), parse_mode="Markdown")
+    else:
+        message.reply_text("There are no posters in the database.")
+
+
+def idtomeme(bot: Bot, update: Update, args: List[str]) -> None:
+    message: Message = update.message
+
+    if len(args) == 0:
+        message.reply_text("You have to give an id")
+        return
+    elif args[0].isdigit():
+        message.reply_text("You have to give an integer")
+        return
+
+    count: int = int(args[0])
+    message.reply_text(id_to_meme(count), reply_markup=keyboard_markup)
+
+
+def category(bot: Bot, update: Update, args: List[str]) -> None:
+    message: Message = update.message
+    if len(args) < 2:
+        message.reply_text(
+            "You have to specify your meme_id and the tags you want to add ... not enough arguemts"
+        )
+        return
+    if args[0].isdigit():
+        if int(args[1]) < 0:
+            message.reply_text("Your given number is below 0")
+            return
+        else:
+            meme_id: int = int(args[1])
+        tags: str = args[1]
+    else:
+        message.reply_text("meme_id has to be an integer")
+        return
+    categorise_meme(meme_id, tags, message.from_user.username, 1)
+    message.reply_text("thx for your help")
+
+
+def _info(bot: Bot, update: Update, args: List[str]) -> None:
+    message: Message = update.message
+    if len(args) == 0:
+        message.reply_text(
+            "You have to specify your meme_id and the tags you want to add ... not enough arguemts"
+        )
+        return
+    if args[0].isdigit():
+        meme_id: int = int(args[0])
+    else:
+        message.reply_text("meme_id has to be an integer")
+        return
+    text: str = history(meme_id)
+    message.reply_text(text, parse_mode="Markdown")
+
+
+def upvote(bot: Bot, update: Update):
+    query = update.callback_query
+    username: str = query.from_user.username
+    meme_id: int = int(query.message.text.split(" ")[8])
+    rate_meme(meme_id, 1, username, 1)
+
+
+def downvote(bot: Bot, update: Update):
+    query = update.callback_query
+    username: str = query.from_user.username
+    meme_id: int = int(query.message.text.split(" ")[8])
+    rate_meme(meme_id, -1, username, 1)
+
+
+def init_telegram():
+
+    updater = Updater(config["telegram_token"])
+
+    commands: List[List[Union[str, Callable]]] = [
+        ["post", post_meme],
+        ["random", random],
+        ["help", userhelp],
+        ["size", _size],
+        ["search", search],
+        ["tags", _tags],
+        ["posters", posters],
+        ["idtomeme", idtomeme],
+        ["category", category],
+        ["info", _info],
     ]
-)
 
+    for command, function in commands:
+        updater.dispatcher.add_handler(
+            CommandHandler(command, function, pass_args=True)
+        )
 
-# https://telepot.readthedocs.io/en/latest/
-class TelegramAPI:
-    def start(self):
-        def handle(message):
-            # pylint: disable=unused-variable
-            content_type, chat_type, chat_id = telepot.glance(message)
-            user = message["from"]["username"]
-            message = message.get("text")
-            if message.startswith("/ran_meme"):
-                for ms in yield_random_meme(message):
-                    print(ms)
-                    bot.sendMessage(chat_id, ms, reply_markup=keyboard)
-
-            if message.startswith("/help"):
-                bot.sendMessage(chat_id, show_help(), parse_mode="Markdown")
-
-            if message.startswith("/size"):
-                size: int = session.query(Memes).count()
-                bot.sendMessage(
-                    chat_id, "There are : " + str(size) + " memes in the database"
-                )
-
-            if message.startswith("/search"):
-                for ms in yield_search(message.split(" ")[1:]):
-                    bot.sendMessage(chat_id, ms, reply_markup=keyboard)
-
-            if message.startswith("/tags"):
-                bot.sendMessage(
-                    chat_id, "```" + list_tags() + "```", parse_mode="Markdown"
-                )
-
-            if message.startswith("/posters"):
-                bot.sendMessage(
-                    chat_id, "```" + list_users() + "```", parse_mode="Markdown"
-                )
-
-            if message.startswith("/info"):
-                bot.sendMessage(
-                    chat_id, history(message.split(" ")[1]), parse_mode="Markdown"
-                )
-
-            if message.startswith("/post_meme"):
-                add_meme(
-                    message.split(" ")[1],
-                    message.split(" ")[2],
-                    user,
-                    1,
-                    datetime.datetime.utcnow(),
-                )
-
-            if message.startswith("/id2meme"):
-                bot.sendMessage(
-                    chat_id,
-                    id_to_meme(int(message.split(" ")[1])),
-                    reply_markup=keyboard,
-                )
-
-            if message.startswith("/cate_meme"):
-                args: list = message.split(" ")[1:]
-                categorise_meme(args[0], args[1], user, 1)
-
-        def query(message):
-            # pylint: disable=unused-variable
-            query_id, from_id, query_data = telepot.glance(
-                message, flavor="callback_query"
-            )
-
-            username = message["from"]["username"]
-            rating = query_data
-            meme_id: int = int(message["message"]["text"].split(" ")[8])
-
-            if rating == "UpVote":
-                rate_meme(int(meme_id), 1, username, 1)
-            elif rating == "DownVote":
-                rate_meme(int(meme_id), -1, username, 1)
-
-            bot.answerCallbackQuery(
-                query_id,
-                text="thanks for your rating (" + rating + "/" + str(meme_id) + ")",
-            )
-
-        bot = telepot.Bot(config["tele_token"])
-        MessageLoop(bot, {"chat": handle, "callback_query": query}).run_as_thread()
+    updater.dispatcher.add_handler(CallbackQueryHandler(upvote, pattern="UpVote"))
+    updater.dispatcher.add_handler(CallbackQueryHandler(downvote, pattern="DownVote"))
+    updater.start_polling()
