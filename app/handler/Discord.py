@@ -19,13 +19,14 @@ from func.essentials import (
     yield_random_meme,
 )
 from func.search import yield_search
-from func.static import show_help
+from func.static import show_help, translate
 
 
 class DiscordAPI(commands.bot.Bot):
     def __init__(self):
         super().__init__(command_prefix=config["key"])
         self.remove_command("help")
+        self.lang = translate()
 
         @self.event
         async def on_ready():
@@ -46,7 +47,7 @@ class DiscordAPI(commands.bot.Bot):
         @search.error
         async def search_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send("Empty query. You need to specify tags to search.")
+                await ctx.send(self.lang["error"]["miss-arg-searcht"])
             else:
                 raise error
 
@@ -60,14 +61,14 @@ class DiscordAPI(commands.bot.Bot):
         @self.command(pass_context=True)
         async def size(ctx):
             size: int = session.query(Memes).count()
-            await ctx.send("There are : {} memes in the database".format(size))
+            await ctx.send(self.lang["info"]["db-meme-count"].format(size))
 
         @self.command(pass_context=True)
         async def post(ctx, link, tag):
             if "discord" in link:
                 link: str = link.split("?")[0]
             if len(link) >= 512:
-                await ctx.send("Link is to long. Max length is 512 characters.")
+                await ctx.send(self.lang["error"]["link-to-long"])
                 return
 
             add_meme(link, tag, ctx.author.name, 0, ctx.created_at)
@@ -75,23 +76,19 @@ class DiscordAPI(commands.bot.Bot):
         @post.error
         async def post_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send(
-                    "You need to specify a link to a meme and tags you want to set."
-                )
+                await ctx.send(self.lang["error"]["miss-arg-link"])
             else:
                 raise error
 
         @self.command(pass_context=True)
         async def category(ctx, id, tags):
             categorise_meme(id, tags, ctx.author.name, 0)
-            await ctx.send("Tag has been added.")
+            await ctx.send(self.lang["success"]["tag-added"])
 
         @category.error
         async def category_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send(
-                    "You need to specify an id of a meme and tags you want to set."
-                )
+                await ctx.send(self.lang["error"]["miss-arg-category"])
             else:
                 raise error
 
@@ -101,7 +98,7 @@ class DiscordAPI(commands.bot.Bot):
             if not tags.isspace():
                 await ctx.send("```{}```".format(tags))
             else:
-                await ctx.send("There are no tags in the database.")
+                await ctx.send(self.lang["info"]["db-no-tags"])
 
         @self.command(pass_context=True)
         async def posters(ctx):
@@ -109,7 +106,7 @@ class DiscordAPI(commands.bot.Bot):
             if users:
                 await ctx.send("```{}```".format(users))
             else:
-                await ctx.send("There are no posters in the database.")
+                await ctx.send(self.lang["info"]["db-no-posters"])
 
         @self.command(pass_context=True)
         async def info(ctx, arg):
@@ -118,9 +115,7 @@ class DiscordAPI(commands.bot.Bot):
         @info.error
         async def info_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send(
-                    "You need to specify the id of the meme you want more info about."
-                )
+                await ctx.send(self.lang["error"]["miss-arg-info"])
             else:
                 raise error
 
@@ -133,9 +128,7 @@ class DiscordAPI(commands.bot.Bot):
         @idtomeme.error
         async def idtomeme_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send(
-                    "You need to specify the id of the meme you want to show."
-                )
+                await ctx.send(self.lang["error"]["miss-arg-idtomeme"])
             else:
                 raise error
 
@@ -145,15 +138,14 @@ class DiscordAPI(commands.bot.Bot):
                 print(user.name, "/", user)
 
                 msg = reaction.message
-                print(msg.content.split(" ")[8])
-                meme_id: int = int(msg.content.split(" ")[8])
+                meme_id: int = int(msg.content.split(" ")[4])
 
                 if str(reaction) == chr(11014):
                     rate_meme(meme_id, 1, user.name, 0)
                 elif str(reaction) == chr(11015):
                     rate_meme(meme_id, -1, user.name, 0)
 
-                await msg.channel.send("Thx for your rating, {}".format(user.name))
+                await msg.channel.send(self.lang["success"]["vote-added"].format(user.name))
 
     async def read_meme_channel(self):
         for channel in self.get_all_channels():

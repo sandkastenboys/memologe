@@ -1,5 +1,6 @@
+from configparser import ConfigParser
+import os
 from typing import Dict
-
 
 resolve_platform: Dict[int, str] = {0: "Discord", 1: "Telegram"}
 
@@ -24,3 +25,20 @@ def show_help() -> str:
         "When you have further questions, see contacts here: https://spartanerspaten.github.io/"
         "Please reports bugs here: https://github.com/SpartanerSpaten/Memologe/"
     )
+
+
+def translate(language: str = "en", path: str = "app/translate") -> ConfigParser:
+    translate: ConfigParser = ConfigParser()
+    lang_file = "{}/{}.ini".format(path, language)
+    if os.path.isfile(lang_file):
+        translate.read(lang_file)
+    else:
+        print(os.getcwd())
+        raise FileNotFoundError
+    print("Config sections {}".format(translate.sections()))
+    print(
+        "Config keys {}".format(
+            {section: dict(translate[section]) for section in translate.sections()}
+        )
+    )
+    return translate

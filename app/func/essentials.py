@@ -185,8 +185,8 @@ def list_tags() -> str:
 
 def list_users() -> str:
     u: List[User] = session.query(User).order_by(
-        User.posts.desc()
-    ).all()  # type: ignore
+        User.posts.desc()  # type: ignore
+    ).all()
     ret_val: str = "Username" + " " * 12 + "Platform" + " " * 12 + "Interactions" + " " * 8
     for x in range(min(len(u), 10)):
         ret_val += (
