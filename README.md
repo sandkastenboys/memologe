@@ -1,8 +1,7 @@
 # Memologe
 Meme Bot for Discord and Telegram
 
-![Docker Build](https://img.shields.io/docker/automated/einspaten/memologe.svg?style=popout)
-![Travis](https://img.shields.io/travis/com/SpartanerSpaten/memologe.svg?color=green&label=Travis&style=popout)
+![Travis](https://api.travis-ci.com/SpartanerSpaten/Memologe.svg?branch=master)
 
 ## Add bot to your Group / Discord Server
 
@@ -15,7 +14,7 @@ This is a server application so it only runs on linux.
 ```sybase
 $ git clone https://github.com/SpartanerSpaten/Memologe.git
 ```
-Via ![Docker](https://hub.docker.com/r/einspaten/memologe)
+Via [Docker](https://hub.docker.com/r/einspaten/memologe)
 
 ```sybase
 $ cd Memologe
@@ -54,4 +53,4 @@ This bot allows you too download your memes and save it an e.g an external hard 
 
 ## Bug Reports
 
-Create an ![ISSUE](https://github.com/SpartanerSpaten/Memologe/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
+Create an [ISSUE](https://github.com/SpartanerSpaten/Memologe/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
