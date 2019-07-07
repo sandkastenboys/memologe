@@ -4,6 +4,8 @@ python: 3.7
 services: 
   - mysql
 cache: pip
-install: pip3 install -r requirements.txt
+install:
+  - mysql -e 'CREATE DATABASE memes;'
+  - pip3 install -r requirements.txt
 script:
   - python3 Memologe_Test.py

@@ -1,4 +1,6 @@
 #!/bin/bash
 set -ex
-docker-compose pull
+
+cd "$(dirname "$0")"
+docker-compose build
 docker-compose up -d

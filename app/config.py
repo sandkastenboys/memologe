@@ -1,9 +1,9 @@
 import os
-from typing import Union, Tuple, List
+from typing import Dict, List, Tuple, Union
 
-to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], any]]] = [
+to_load: List[Union[Union[Tuple[str, Union[int, str]]]]] = [
 
-    ("debug", "False"),
+    ("sqlite", "False"),
 
     # sqlalchemy
     ("MYSQL_HOSTNAME", "127.0.0.1"),
@@ -14,7 +14,7 @@ to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], any]]] = [
 
     # core functionality
     ("max_post", 10),
-    ("save", "True"),
+    ("save_memes_to_disc", "True"),
     ("destination", "/mnt/hdd/memes/"),
     ("read_on_start", "False"),
 
@@ -23,13 +23,13 @@ to_load: List[Union[Union[Tuple[str, int], Tuple[str, str], any]]] = [
     ("key", "$"),
 
     # tokens
-    ("tele_token", ""),  # Telegram Bot token
-    ("disc_token", ""),  # Discord Bot Token
+    ("telegram_token", ""),  # Telegram Bot token
+    ("discord_token", ""),  # Discord Bot Token
 
 ]
 
 # the final configuration dict
-config: dict = {}
+config: Dict[str, Union[str, int, None]] = {}
 
 # load all configuration values from the env
 for key in to_load:
@@ -42,6 +42,5 @@ for key in to_load:
         config[key] = os.environ.get(key)
 
 # set sqlalchemy database connection uri
-config["SQLALCHEMY_DATABASE_URI"]:
-    str = f"mysql+pymysql://{config['MYSQL_USERNAME']}:{config['MYSQL_PASSWORD']}@" \
-        f"{config['MYSQL_HOSTNAME']}:{config['MYSQL_PORT']}/{config['MYSQL_DATABASE']}"
+config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{config['MYSQL_USERNAME']}:{config['MYSQL_PASSWORD']}@" \
+    f"{config['MYSQL_HOSTNAME']}:{config['MYSQL_PORT']}/{config['MYSQL_DATABASE']}"

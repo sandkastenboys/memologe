@@ -1,13 +1,14 @@
-import datetime
-from objects import *
-from sqlalchemy import String, Integer, Column, ForeignKey, Boolean, DateTime
+from datetime import datetime
+from sqlalchemy import String, Integer, Column, ForeignKey, DateTime
 from typing import Union
 
+from objects import Base, engine, session
 
-class User(Base):
+
+class User(Base):  # type: ignore
     __tablename__ = "user"
 
-    platform: Union[bool, int] = Column(Integer)  # 0 -> Discord, 1 -> Telegram ... maybe other platforms added later
+    platform: Union[int, Column] = Column(Integer)  # 0 -> Discord, 1 -> Telegram ... maybe other platforms added later
     user_id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
     username: Union[str, Column] = Column(String(32))
     posts: Union[int, Column] = Column(Integer)  # Could be counted but we want to save performance
@@ -25,19 +26,19 @@ class User(Base):
         session.commit()
 
 
-class Memes(Base):
+class Memes(Base):  # type: ignore
     __tablename__ = "meme_list"
 
     id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
-    link: Union[str, Column] = Column(String(256), unique=True)
-    post_time: Union[datetime.datetime, Column] = Column(DateTime)
+    link: Union[str, Column] = Column(String(512), unique=True)
+    post_time: Union[datetime, Column] = Column(DateTime)
     path: Union[int, Column] = Column(String(45))
     stealer: Union[int, Column] = Column(Integer, ForeignKey('user.user_id'))
 
     @staticmethod
     def create(link, path, stealer, post_time=None) -> 'Memes':
         if post_time is None:
-            post_time = datetime.datetime.utcnow()
+            post_time = datetime.utcnow()
 
         meme: Memes = Memes(link=link, post_time=post_time, path=path, stealer=stealer)
 
@@ -47,15 +48,15 @@ class Memes(Base):
         return meme
 
 
-class Tags(Base):
+class Tags(Base):  # type: ignore
     __tablename__ = "tags"
 
     id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
     tag: Union[str, Column] = Column(String(32), unique=True)
 
     @staticmethod
-    def create(tag: str):
-        tag: Tags = Tags(tag=tag)
+    def create(a_tag: str):
+        tag: Tags = Tags(tag=a_tag)
 
         session.add(tag)
         session.commit()
@@ -63,16 +64,16 @@ class Tags(Base):
         return tag
 
 
-class Association(Base):
+class Association(Base):  # type: ignore
     __tablename__ = 'association'
     meme_id: Union[int, Column] = Column(Integer, ForeignKey('meme_list.id'), primary_key=True)
     tag_id: Union[int, Column] = Column(Integer, ForeignKey('tags.id'), primary_key=True)
     added_by: Union[int, Column] = Column(Integer, ForeignKey('user.user_id'))
-    time_added: Union[datetime.datetime, Column] = Column(DateTime)
+    time_added: Union[datetime, Column] = Column(DateTime)
 
     @staticmethod
     def create(meme_id: int, tag_id: int, user: int) -> 'Association':
-        ass = Association(meme_id=meme_id, tag_id=tag_id, added_by=user, time_added=datetime.datetime.now())
+        ass = Association(meme_id=meme_id, tag_id=tag_id, added_by=user, time_added=datetime.now())
 
         session.add(ass)
         session.commit()
@@ -80,16 +81,16 @@ class Association(Base):
         return ass
 
 
-class Ratings(Base):
+class Ratings(Base):  # type: ignore
     __tablename__ = "ratings"
     meme_id: Union[int, Column] = Column(Integer, ForeignKey('meme_list.id'), primary_key=True)
     added_by: Union[int, Column] = Column(Integer, ForeignKey('user.user_id'), primary_key=True)
     rate: Union[int, Column] = Column(Integer)
-    time_added: Union[datetime.datetime, Column] = Column(DateTime)
+    time_added: Union[datetime, Column] = Column(DateTime)
 
     @staticmethod
     def create(user: int, meme: int, vote: int):
-        v: Ratings = Ratings(meme_id=meme, added_by=user, rate=vote, time_added=datetime.datetime.now())
+        v: Ratings = Ratings(meme_id=meme, added_by=user, rate=vote, time_added=datetime.now())
 
         session.add(v)
         session.commit()
@@ -97,4 +98,4 @@ class Ratings(Base):
         return v
 
 
-Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)  # type: ignore
