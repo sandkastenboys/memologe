@@ -152,7 +152,7 @@ class DiscordAPI(commands.bot.Bot):
                     self.lang["success"]["vote-added"].format(user.name)
                 )
 
-    async def read_meme_channel(self):
+    async def read_meme_channel(self) -> None:
         for channel in self.get_all_channels():
             if channel.name == "memes" or channel.name == "cursed-images":
                 await self.process(channel)

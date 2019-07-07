@@ -4,6 +4,8 @@ from telegram.update import Update
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext.dispatcher import run_async
 from telegram.message import Message
+from telegram.callbackquery import CallbackQuery
+
 from typing import List, Callable, Union, Tuple
 
 from config import config
@@ -184,7 +186,7 @@ def _info(bot: Bot, update: Update, args: List[str]) -> None:
 
 @run_async
 def upvote(bot: Bot, update: Update) -> None:
-    query = update.callback_query
+    query: CallbackQuery = update.callback_query
     username: str = query.from_user.username
     meme_id: int = int(query.message.text.split(" ")[8])
     rate_meme(meme_id, 1, username, 1)
@@ -192,7 +194,7 @@ def upvote(bot: Bot, update: Update) -> None:
 
 @run_async
 def downvote(bot: Bot, update: Update) -> None:
-    query = update.callback_query
+    query: CallbackQuery = update.callback_query
     username: str = query.from_user.username
     meme_id: int = int(query.message.text.split(" ")[8])
     rate_meme(meme_id, -1, username, 1)
@@ -200,7 +202,7 @@ def downvote(bot: Bot, update: Update) -> None:
 
 def init_telegram():
 
-    updater = Updater(config["telegram_token"])
+    updater: Updater = Updater(config["telegram_token"])
 
     commands: List[List[Union[str, Callable]]] = [
         ["post", post_meme],
