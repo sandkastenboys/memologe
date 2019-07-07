@@ -5,7 +5,7 @@ from subprocess import check_output
 timeout = 20
 
 
-def start_bot():
+def start_bot() -> None:
     try:
         os.system("ls .")
         check_output(["python3", "./app/main.py"], timeout=timeout)
