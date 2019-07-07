@@ -1,7 +1,7 @@
 # Memologe
 Meme Bot for Discord and Telegram
 
-![Travis](https://api.travis-ci.com/SpartanerSpaten/Memologe.svg?branch=master)
+[![Build Status](https://img.shields.io/travis/sandkastenboys/memologe.svg?maxAge=1200)](https://travis-ci.org/sandkastenboys/memologe)
 
 ## Add bot to your Group / Discord Server
 
@@ -12,7 +12,7 @@ Coming Soon ...
 This is a server application so it only runs on linux.
 
 ```sybase
-$ git clone https://github.com/SpartanerSpaten/Memologe.git
+$ git clone https://github.com/sandkastenboys/memologe.git
 ```
 Via [Docker](https://hub.docker.com/r/einspaten/memologe)
 
@@ -28,11 +28,11 @@ $ ./start.sh
     
   !Warning! in Telegram "/" replaces your command key ($).  
     
-  - **$post_meme <link> <tags>**         
+  - **$post <link> <tags>**         
   seperate multiple tags with ';'
-  - **$ran_meme <how_many = 1>**         
+  - **$random <how_many = 1>**         
   posts random meme
-  - **$cate_meme <id> <tags>**           
+  - **$category <id> <tags>**           
   adds these tags to the meme so that it can be found more easily
   - **$search <tag> <how_many = 1>**     
   searches memes based on tag
@@ -44,7 +44,7 @@ $ ./start.sh
   returns list of most active users of this bot
   - **$tags**                            
   returns all tags in the database
-  - **$id2meme <id>**
+  - **$idtomeme <id>**
   returns meme with this id
  
 You also can rate memes by pressing downVote / UpVote or the corresponding arrow emoji.
@@ -53,4 +53,4 @@ This bot allows you too download your memes and save it an e.g an external hard 
 
 ## Bug Reports
 
-Create an [ISSUE](https://github.com/SpartanerSpaten/Memologe/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
+Create an [ISSUE](https://github.com/sandkastenboys/memologe/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
