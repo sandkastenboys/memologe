@@ -5,10 +5,10 @@ from typing import Union
 from objects import Base, engine, session
 
 
-class User(Base):
+class User(Base):  # type: ignore
     __tablename__ = "user"
 
-    platform: Union[bool, int] = Column(Integer)  # 0 -> Discord, 1 -> Telegram ... maybe other platforms added later
+    platform: Union[int, Column] = Column(Integer)  # 0 -> Discord, 1 -> Telegram ... maybe other platforms added later
     user_id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
     username: Union[str, Column] = Column(String(32))
     posts: Union[int, Column] = Column(Integer)  # Could be counted but we want to save performance
@@ -26,7 +26,7 @@ class User(Base):
         session.commit()
 
 
-class Memes(Base):
+class Memes(Base):  # type: ignore
     __tablename__ = "meme_list"
 
     id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
@@ -48,7 +48,7 @@ class Memes(Base):
         return meme
 
 
-class Tags(Base):
+class Tags(Base):  # type: ignore
     __tablename__ = "tags"
 
     id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
@@ -64,7 +64,7 @@ class Tags(Base):
         return tag
 
 
-class Association(Base):
+class Association(Base):  # type: ignore
     __tablename__ = 'association'
     meme_id: Union[int, Column] = Column(Integer, ForeignKey('meme_list.id'), primary_key=True)
     tag_id: Union[int, Column] = Column(Integer, ForeignKey('tags.id'), primary_key=True)
@@ -81,7 +81,7 @@ class Association(Base):
         return ass
 
 
-class Ratings(Base):
+class Ratings(Base):  # type: ignore
     __tablename__ = "ratings"
     meme_id: Union[int, Column] = Column(Integer, ForeignKey('meme_list.id'), primary_key=True)
     added_by: Union[int, Column] = Column(Integer, ForeignKey('user.user_id'), primary_key=True)
@@ -98,4 +98,4 @@ class Ratings(Base):
         return v
 
 
-Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)  # type: ignore
