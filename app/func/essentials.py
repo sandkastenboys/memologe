@@ -3,7 +3,7 @@ import requests
 import shutil
 from datetime import datetime
 from sqlalchemy import func
-from typing import List, Union, Iterator
+from typing import Iterator, List, Union
 from uuid import uuid4
 
 from config import config
@@ -217,10 +217,10 @@ def history(meme_id: str) -> str:
         Association.meme_id == int(meme_id),
         Association.tag_id == Tags.id,
         Association.added_by == User.user_id,
-    )
+    ).all()
     ratig = session.query(Ratings, User).filter(
         int(meme_id) == Ratings.meme_id, Ratings.added_by == User.user_id
-    )
+    ).all()
 
     time_line = sort_by_data(tags, ratig)
 
@@ -235,8 +235,8 @@ def history(meme_id: str) -> str:
                 " " * (20 - len(username)),
                 str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")),
             )
-            tag: str = x[0].tag
         else:
+            tag: str = x[0].tag
             message += "{}{}{}{}UTC Time".format(
                 str(tag),
                 " " * (20 - len(tag)) + str(username),

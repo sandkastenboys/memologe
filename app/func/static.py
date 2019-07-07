@@ -35,9 +35,9 @@ def translate(language: str = "en", path: str = "app/translate") -> ConfigParser
     else:
         print(os.getcwd())
         raise FileNotFoundError
-    print("Config sections {}".format(translate.sections()))
+    print("Translate sections {}".format(translate.sections()))
     print(
-        "Config keys {}".format(
+        "Translate keys {}".format(
             {section: dict(translate[section]) for section in translate.sections()}
         )
     )
