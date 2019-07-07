@@ -13,7 +13,7 @@ from objects import session
 
 
 def prep4post(meme: Memes) -> str:
-    user: User = id2user(meme.stealer)
+    user: User = id_to_user(meme.stealer)
     return 'Here your meme posted by: ' + str(user.username) + ' id = ' + str(meme.id) + ' : ' + ";".join(
         query_tags(meme.id)) + " " + meme.link
 
@@ -45,21 +45,13 @@ def random_meme() -> 'Memes':
     return meme
 
 
-def yield_random_meme(message: str) -> Iterator[str]:
-    message_split = message.split(" ")
-    if len(message_split) > 0:
-        how_many: int = int(message.split(" ")[1])
-        if how_many > 10:
-            how_many = 10
-    else:
-        how_many = 1
-
-    for _ in range(how_many):
+def yield_random_meme(count: int) -> Iterator[str]:
+    for _ in range(count):
         meme: Memes = random_meme()
         yield prep4post(meme)
 
 
-def post_meme(link: str, tags: str, author: str, platform: int, posted_at: datetime) -> str:
+def add_meme(link: str, tags: str, author: str, platform: int, posted_at: datetime) -> str:
     if not check_existens(link) and type(find_link(link)) is str:
 
         author_uuid: int = check_auther_registerd(author, platform)
@@ -172,9 +164,8 @@ def list_tags() -> str:
 
 
 def list_users() -> str:
-    ret_val: str = ""
-    u: List[User] = session.query(User).order_by(User.posts.desc()).all()
-    ret_val += "username" + " " * 12 + "platform" + " " * 12 + "interactions" + " " * 8
+    u: List[User] = session.query(User).order_by(User.posts.desc()).all()  # type: ignore
+    ret_val: str = "Username" + " " * 12 + "Platform" + " " * 12 + "Interactions" + " " * 8
     for x in range(min(len(u), 10)):
         ret_val += "\n" + u[x].username + " " * (20 - len(u[x].username)) + str(
             resolve_platform[u[x].platform]) + " " * (20 - len(str(resolve_platform[u[x].platform]))) + str(u[x].posts)
@@ -187,7 +178,7 @@ def history(meme_id: str) -> str:
     if meme is None:
         return "Sorry there is no meme with this id yet"
 
-    user: User = id2user(meme.stealer)
+    user: User = id_to_user(meme.stealer)
     message: str = "\nPosted by: " + str(user.username) + "\nTime: " + str(meme.post_time) + "\nRating: " + str(
         sum_ratings(meme.id)) + "\n\n"
     message += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
@@ -201,12 +192,17 @@ def history(meme_id: str) -> str:
     time_line = sort_by_data(tags, ratig)
 
     for x in time_line:
-        if x[0] != 0:
-            message += str(x[0].tag) + " " * (20 - len(x[0].tag)) + str(x[2].username) + " " * \
-                (20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time"
+        username: str = x[2].username
+        if x[0] == 0:
+            rate: int = x[1].rate
+            message += "{}{}{}{}{}UTC Time"\
+                .format(rate_to_text(rate), " " * (20 - len(rate_to_text(rate))), username,
+                        " " * (20 - len(username)), str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")))
+            tag: str = x[0].tag
         else:
-            message += rate_to_text(x[1].rate) + " " * (20 - len(rate_to_text(x[1].rate))) + str(x[2].username) + " " * \
-                (20 - len(str(x[2].username))) + str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")) + "UTC Time"
+            message += "{}{}{}{}UTC Time"\
+                .format(str(tag), " " * (20 - len(tag)) + str(username), " " * (20 - len(str(username))),
+                        str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")))
 
     return "```\n{}\n```".format(message)
 
@@ -246,11 +242,11 @@ def sum_ratings(meme_id: int) -> int:
     return sum_rat
 
 
-def id2user(user_id: int) -> 'User':
+def id_to_user(user_id: int) -> 'User':
     return session.query(User).filter(User.user_id == user_id).first()
 
 
-def id2meme(meme_id: int) -> str:
+def id_to_meme(meme_id: int) -> str:
     meme = session.query(Memes).filter(Memes.id == meme_id).first()
     if meme is None:
         return "There is no meme with this id"

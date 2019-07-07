@@ -1,7 +1,7 @@
 import os
-from typing import Union, Tuple, List
+from typing import Dict, List, Tuple, Union
 
-to_load: List[Union[Union[Tuple[str, int], Tuple[str, str]]]] = [
+to_load: List[Union[Union[Tuple[str, Union[int, str]]]]] = [
 
     ("sqlite", "False"),
 
@@ -29,7 +29,7 @@ to_load: List[Union[Union[Tuple[str, int], Tuple[str, str]]]] = [
 ]
 
 # the final configuration dict
-config: dict = {}
+config: Dict[str, Union[str, int, None]] = {}
 
 # load all configuration values from the env
 for key in to_load:

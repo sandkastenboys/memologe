@@ -6,10 +6,10 @@ from telepot.loop import MessageLoop
 from config import config
 from db_models import Memes
 from objects import session
-from func.essentials import (yield_random_meme, list_tags, list_users, rate_meme,
-                             history, post_meme, id2meme, categorise_meme)
+from func.essentials import (add_meme, categorise_meme, history, id_to_meme,
+                             list_tags, list_users, rate_meme, yield_random_meme)
 from func.search import yield_search
-from func.static import help
+from func.static import show_help
 
 keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='UpVote', callback_data='UpVote'),
@@ -31,7 +31,7 @@ class TelegramAPI():
                     bot.sendMessage(chat_id, ms, reply_markup=keyboard)
 
             if message.startswith('/help'):
-                bot.sendMessage(chat_id, help(), parse_mode='Markdown')
+                bot.sendMessage(chat_id, show_help(), parse_mode='Markdown')
 
             if message.startswith('/size'):
                 size: int = session.query(Memes).count()
@@ -51,10 +51,10 @@ class TelegramAPI():
                 bot.sendMessage(chat_id, history(message.split(" ")[1]), parse_mode='Markdown')
 
             if message.startswith("/post_meme"):
-                post_meme(message.split(" ")[1], message.split(" ")[2], user, 1, datetime.datetime.utcnow())
+                add_meme(message.split(" ")[1], message.split(" ")[2], user, 1, datetime.datetime.utcnow())
 
             if message.startswith("/id2meme"):
-                bot.sendMessage(chat_id, id2meme(int(message.split(" ")[1])), reply_markup=keyboard)
+                bot.sendMessage(chat_id, id_to_meme(int(message.split(" ")[1])), reply_markup=keyboard)
 
             if message.startswith("/cate_meme"):
                 args: list = message.split(" ")[1:]

@@ -1,7 +1,7 @@
 import random
 
 from db_models import Memes, Tags, Association
-from func.essentials import parse_amount, prep4post
+from func.essentials import prep4post
 from objects import session
 from typing import List, Iterator
 
@@ -17,7 +17,10 @@ def soft_search(tags: list, amount: int):
     for x in tags:
         query_tags.append(x.id)
 
-    mem: list = session.query(Memes).filter(Association.tag_id.in_(query_tags), Association.meme_id == Memes.id).all()
+    mem: list = session.query(Memes).filter(Association.tag_id.in_(query_tags),  # type: ignore
+                                            Association.meme_id == Memes.id).all()
+    if len(mem) == 0:
+        return "Search query did not return any results."
     send_memes: list = []
     random.shuffle(mem)
     count: int = 0
@@ -28,25 +31,14 @@ def soft_search(tags: list, amount: int):
         count += 1
 
 
-def yield_search(message: list) -> Iterator[str]:  # $search tag1;tag2;tag3 10 1 -> Tags Amount Only
-    possible_tags: list = message[0].split(";")
-    # eqivalent to WHERE id IN (..., ..., ...) Tag list
-    tags: list = session.query(Tags).filter(Tags.tag.in_(possible_tags)).all()
-    try:
-        amount: int = parse_amount(message[1])
-    except IndexError:
-        amount = 1
-    try:
-        only_this_tags = message[2]
-    except IndexError:
-        only_this_tags = "True"
+def yield_search(tags: str, count: int = 1) -> Iterator[str]:
+    tag_list: list = tags.split(";")
 
-    for _ in range(amount):
-        if only_this_tags == "False":
-            yield "Strict Search not implemented yet"
-            break
-            # for meme in strict_search(tags, amount):
-            #   yield str(meme)
-        else:
-            for meme in soft_search(tags, amount):
-                yield str(meme)
+    # eqivalent to WHERE id IN (..., ..., ...) Tag list
+    tags: list = session.query(Tags).filter(Tags.tag.in_(tag_list)).all()  # type: ignore
+
+    for _ in range(count):
+        print("Soft search: tags {}".format(tags))
+        print("Soft search: count {}".format(count))
+        for meme in soft_search(tag_list, count):
+            yield str(meme)
