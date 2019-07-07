@@ -213,14 +213,20 @@ def history(meme_id: str) -> str:
     ) + "\nRating: " + str(sum_ratings(meme.id)) + "\n\n"
     message += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
 
-    tags = session.query(Tags, Association, User).filter(
-        Association.meme_id == int(meme_id),
-        Association.tag_id == Tags.id,
-        Association.added_by == User.user_id,
-    ).all()
-    ratig = session.query(Ratings, User).filter(
-        int(meme_id) == Ratings.meme_id, Ratings.added_by == User.user_id
-    ).all()
+    tags = (
+        session.query(Tags, Association, User)
+        .filter(
+            Association.meme_id == int(meme_id),
+            Association.tag_id == Tags.id,
+            Association.added_by == User.user_id,
+        )
+        .all()
+    )
+    ratig = (
+        session.query(Ratings, User)
+        .filter(int(meme_id) == Ratings.meme_id, Ratings.added_by == User.user_id)
+        .all()
+    )
 
     time_line = sort_by_data(tags, ratig)
 
@@ -228,20 +234,21 @@ def history(meme_id: str) -> str:
         username: str = x[2].username
         if x[0] == 0:
             rate: int = x[1].rate
-            message += "{}{}{}{}{}UTC Time".format(
+            message += "{}{}{}{}{} UTC\n".format(
                 rate_to_text(rate),
                 " " * (20 - len(rate_to_text(rate))),
                 username,
                 " " * (20 - len(username)),
-                str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")),
+                x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
             )
         else:
             tag: str = x[0].tag
-            message += "{}{}{}{}UTC Time".format(
-                str(tag),
-                " " * (20 - len(tag)) + str(username),
-                " " * (20 - len(str(username))),
-                str(x[1].time_added.strftime("%Y-%m-%d %H:%M:%S")),
+            message += "{}{}{}{}{} UTC\n".format(
+                tag,
+                " " * (20 - len(tag)),
+                username,
+                " " * (20 - len(username)),
+                x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
             )
 
     return "```\n{}\n```".format(message)
@@ -259,7 +266,6 @@ def rate_to_text(vote: int) -> str:
 def sort_by_data(tags, rating) -> list:
     data = []
     for rat, use in rating:
-        print(rat.added_by, use.user_id, use.username)
         data.append((0, rat, use))
     data += tags
     data.sort(

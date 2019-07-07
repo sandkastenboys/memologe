@@ -2,7 +2,7 @@ from config import config
 from handler.Discord import DiscordAPI
 from handler.Telegram import TelegramAPI
 
-print("Start Memologe ...")
+print("Starting Memologe ...")
 
 if config["telegram_token"]:
     telegram: TelegramAPI = TelegramAPI()
