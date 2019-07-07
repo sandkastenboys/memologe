@@ -20,14 +20,14 @@ session = Session()
 connection = session.connection()
 
 
-def reload():
+def reload() -> None:
     global Session, session, connection
     Session = sessionmaker(bind=engine)
     session = Session()
     connection = session.connection()
 
 
-def check_mysql_connection():
+def check_mysql_connection() -> None:
     try:
         connection.scalar(select([1]))
         return

@@ -40,7 +40,7 @@ def parse_count(args: List[str], position: int, default: int = 1) -> Tuple[int, 
 
 
 @run_async
-def post_meme(bot: Bot, update: Update, args: List[str]):
+def post_meme(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
 
     if len(args) == 0:
@@ -55,14 +55,12 @@ def post_meme(bot: Bot, update: Update, args: List[str]):
         post_tags: str = args[1]
 
     message.reply_text(
-        add_meme(
-            link, post_tags, message.from_user.username, 1, message.date
-        )
+        add_meme(link, post_tags, message.from_user.username, 1, message.date)
     )
 
 
 @run_async
-def random(bot: Bot, update: Update, args: List[str]):
+def random(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
 
     number: Tuple[int, str] = parse_count(args, 0)
@@ -77,12 +75,12 @@ def random(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def userhelp(bot: Bot, update: Update, args: List[str]):
+def userhelp(bot: Bot, update: Update, args: List[str]) -> None:
     update.message.reply_text(show_help(), parse_mode="Markdown")
 
 
 @run_async
-def _size(bot: Bot, update: Update, args: List[str]):
+def _size(bot: Bot, update: Update, args: List[str]) -> None:
 
     size: int = session.query(Memes).count()
     update.message.reply_text(
@@ -91,7 +89,7 @@ def _size(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def search(bot: Bot, update: Update, args: List[str]):
+def search(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
     if len(args) < 2:
         count: int = 1
@@ -111,7 +109,7 @@ def search(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def _tags(bot: Bot, update: Update, args: List[str]):
+def _tags(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
     tags: str = list_tags()
     if tags.isspace():
@@ -120,6 +118,7 @@ def _tags(bot: Bot, update: Update, args: List[str]):
         message.reply_text("```{}```".format(tags), parse_mode="Markdown")
 
 
+@run_async
 def posters(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
     users: str = list_users()
@@ -129,6 +128,7 @@ def posters(bot: Bot, update: Update, args: List[str]) -> None:
         message.reply_text("There are no posters in the database.")
 
 
+@run_async
 def idtomeme(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
 
@@ -143,6 +143,7 @@ def idtomeme(bot: Bot, update: Update, args: List[str]) -> None:
     message.reply_text(id_to_meme(count), reply_markup=keyboard_markup)
 
 
+@run_async
 def category(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
     if len(args) < 2:
@@ -164,6 +165,7 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
     message.reply_text("thx for your help")
 
 
+@run_async
 def _info(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
     if len(args) == 0:
@@ -180,14 +182,16 @@ def _info(bot: Bot, update: Update, args: List[str]) -> None:
     message.reply_text(text, parse_mode="Markdown")
 
 
-def upvote(bot: Bot, update: Update):
+@run_async
+def upvote(bot: Bot, update: Update) -> None:
     query = update.callback_query
     username: str = query.from_user.username
     meme_id: int = int(query.message.text.split(" ")[8])
     rate_meme(meme_id, 1, username, 1)
 
 
-def downvote(bot: Bot, update: Update):
+@run_async
+def downvote(bot: Bot, update: Update) -> None:
     query = update.callback_query
     username: str = query.from_user.username
     meme_id: int = int(query.message.text.split(" ")[8])

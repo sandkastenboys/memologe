@@ -3,7 +3,7 @@ import requests
 import shutil
 from datetime import datetime
 from sqlalchemy import func
-from typing import Iterator, List, Union
+from typing import Iterator, List, Union, Tuple
 from uuid import uuid4
 
 from config import config
@@ -20,7 +20,7 @@ def prep4post(meme: Memes) -> str:
     print("Meme link: {}".format(meme.link))
 
     msg: str = "Here is meme number {}".format(meme.id)
-    tags: List = query_tags(meme.id)
+    tags: List[str] = query_tags(meme.id)
     print(tags)
     if tags:
         msg += " with tags {}".format(";".join(tags))
@@ -29,7 +29,7 @@ def prep4post(meme: Memes) -> str:
 
 
 def query_tags(meme_id: int) -> List[str]:
-    return_list = []
+    return_list: List[str] = []
     for x in (
         session.query(Tags)
         .filter(Association.meme_id == meme_id, Tags.id == Association.tag_id)
@@ -44,13 +44,13 @@ def parse_amount(string: str) -> int:
         how_many: int = 1
     else:
         try:
-            how_many = int(string)
+            how_many: int = int(string)
         except ValueError:
-            how_many = 1
+            how_many: int = 1
     return how_many
 
 
-def random_meme() -> "Memes":
+def random_meme() -> Union[Memes, str]:
     meme: Memes = session.query(Memes).order_by(func.random()).first()
 
     if meme is None:
@@ -111,7 +111,7 @@ def create_association(tag_id: int, meme_id: int, user: int):
 
 
 def download(link: str) -> str:
-    filename = str(uuid4()) + "." + link.split(".")[-1]
+    filename: str = str(uuid4()) + "." + link.split(".")[-1]
     r = requests.get(link, stream=True)
     if r.status_code == 200:
         try:
@@ -141,8 +141,8 @@ def check_for_link(link) -> bool:
 
 def find_link(post: str) -> Union[str, bool]:
     try:
-        ind = post.index("http")
-        temp = post[ind:].split(" ")
+        ind: int = post.index("http")
+        temp: List[str] = post[ind:].split(" ")
         return temp[0]
     except ValueError:
         return False
@@ -165,7 +165,7 @@ def check_auther_registerd(author_name: str, platform: int) -> int:
 def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> None:
     auther_uuid: int = check_auther_registerd(author, platform)
 
-    cm: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
+    meme: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
 
     if tags != "":
 
@@ -173,7 +173,7 @@ def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> None
 
         for tag in tags_list:
             tag_id: int = create_tag(tag)
-            create_association(tag_id, cm.id, auther_uuid)
+            create_association(tag_id, meme.id, auther_uuid)
 
 
 def list_tags() -> str:
@@ -213,7 +213,7 @@ def history(meme_id: int) -> str:
     ) + "\nRating: " + str(sum_ratings(meme.id)) + "\n\n"
     message += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
 
-    tags = (
+    tags: List[Tuple[Tags, Association, User]] = (
         session.query(Tags, Association, User)
         .filter(
             Association.meme_id == int(meme_id),
@@ -222,13 +222,23 @@ def history(meme_id: int) -> str:
         )
         .all()
     )
-    ratig = (
+    ratig: List[Tuple[Ratings, User]] = (
         session.query(Ratings, User)
         .filter(int(meme_id) == Ratings.meme_id, Ratings.added_by == User.user_id)
         .all()
     )
 
-    time_line = sort_by_data(tags, ratig)
+    time_line: List[
+        Union[Tuple[int, Ratings, User], Tuple[Tags, Association, User]]
+    ] = sort_by_data(tags, ratig)
+    message += merge_time_line(time_line)
+    return message
+
+
+def merge_time_line(
+    time_line: List[Union[Tuple[int, Ratings, User], Tuple[Tags, Association, User]]]
+) -> str:
+    message: str = ""
     for x in time_line:
         username: str = x[2].username
         if x[0] == 0:
@@ -240,7 +250,7 @@ def history(meme_id: int) -> str:
                 " " * (20 - len(username)),
                 x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
             )
-        else:
+        elif type(x[0]) is Tags:
             tag: str = x[0].tag
             message += "{}{}{}{}{} UTC\n".format(
                 tag,
@@ -262,8 +272,10 @@ def rate_to_text(vote: int) -> str:
         raise ValueError
 
 
-def sort_by_data(tags, rating) -> list:
-    data = []
+def sort_by_data(
+    tags: List[Tuple[Tags, Association, User]], rating: List[Tuple[Ratings, User]]
+) -> List[Union[Tuple[int, Ratings, User], Tuple[Tags, Association, User]]]:
+    data: List[Union[Tuple[int, Ratings, User], Tuple[Tags, Association, User]]] = []
     for rat, use in rating:
         data.append((0, rat, use))
     data += tags
