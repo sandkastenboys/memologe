@@ -17,8 +17,10 @@ def soft_search(tags: list, amount: int):
     for x in tags:
         query_tags.append(x.id)
 
-    mem: list = session.query(Memes).filter(Association.tag_id.in_(query_tags),  # type: ignore
-                                            Association.meme_id == Memes.id).all()
+    mem: list = session.query(Memes).filter(
+        Association.tag_id.in_(query_tags),  # type: ignore
+        Association.meme_id == Memes.id,
+    ).all()
     if len(mem) == 0:
         return "Search query did not return any results."
     send_memes: list = []
@@ -35,7 +37,9 @@ def yield_search(tags: str, count: int = 1) -> Iterator[str]:
     tag_list: list = tags.split(";")
 
     # eqivalent to WHERE id IN (..., ..., ...) Tag list
-    tags: list = session.query(Tags).filter(Tags.tag.in_(tag_list)).all()  # type: ignore
+    tags: list = session.query(Tags).filter(
+        Tags.tag.in_(tag_list)
+    ).all()  # type: ignore
 
     for _ in range(count):
         print("Soft search: tags {}".format(tags))

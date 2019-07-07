@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from config import config
 
 if config["sqlite"] == "True":
-    engine = create_engine('sqlite:///' + os.path.join("./", "new_db"))
+    engine = create_engine("sqlite:///" + os.path.join("./", "new_db"))
 else:  # Mysql
     print(config["SQLALCHEMY_DATABASE_URI"])
     engine = create_engine(config["SQLALCHEMY_DATABASE_URI"])

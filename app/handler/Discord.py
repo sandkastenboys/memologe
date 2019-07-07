@@ -7,8 +7,17 @@ from typing import Union
 
 from config import config
 from db_models import Memes
-from func.essentials import (add_meme, categorise_meme, find_link, history, id_to_meme,
-                             list_tags, list_users, rate_meme, yield_random_meme)
+from func.essentials import (
+    add_meme,
+    categorise_meme,
+    find_link,
+    history,
+    id_to_meme,
+    list_tags,
+    list_users,
+    rate_meme,
+    yield_random_meme,
+)
 from func.search import yield_search
 from func.static import show_help
 
@@ -16,12 +25,12 @@ from func.static import show_help
 class DiscordAPI(commands.bot.Bot):
     def __init__(self):
         super().__init__(command_prefix=config["key"])
-        self.remove_command('help')
+        self.remove_command("help")
 
         @self.event
         async def on_ready():
             print(config["read_on_start"])
-            if config["read_on_start"] == 'True':
+            if config["read_on_start"] == "True":
                 await self.read_meme_channel()
 
         @self.command(pass_context=True)
@@ -41,7 +50,7 @@ class DiscordAPI(commands.bot.Bot):
             else:
                 raise error
 
-        @self.command(name='random', pass_context=True)
+        @self.command(name="random", pass_context=True)
         async def _random(ctx, count="1"):
             for msg in yield_random_meme(int(count)):
                 post: Context = await ctx.send(msg)
@@ -55,7 +64,7 @@ class DiscordAPI(commands.bot.Bot):
 
         @self.command(pass_context=True)
         async def post(ctx, link, tag):
-            if 'discord' in link:
+            if "discord" in link:
                 link: str = link.split("?")[0]
             if len(link) >= 512:
                 await ctx.send("Link is to long. Max length is 512 characters.")
@@ -66,7 +75,9 @@ class DiscordAPI(commands.bot.Bot):
         @post.error
         async def post_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send("You need to specify a link to a meme and tags you want to set.")
+                await ctx.send(
+                    "You need to specify a link to a meme and tags you want to set."
+                )
             else:
                 raise error
 
@@ -78,7 +89,9 @@ class DiscordAPI(commands.bot.Bot):
         @category.error
         async def category_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send("You need to specify an id of a meme and tags you want to set.")
+                await ctx.send(
+                    "You need to specify an id of a meme and tags you want to set."
+                )
             else:
                 raise error
 
@@ -105,7 +118,9 @@ class DiscordAPI(commands.bot.Bot):
         @info.error
         async def info_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send("You need to specify the id of the meme you want more info about.")
+                await ctx.send(
+                    "You need to specify the id of the meme you want more info about."
+                )
             else:
                 raise error
 
@@ -118,7 +133,9 @@ class DiscordAPI(commands.bot.Bot):
         @idtomeme.error
         async def idtomeme_error(ctx, error):
             if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send("You need to specify the id of the meme you want to show.")
+                await ctx.send(
+                    "You need to specify the id of the meme you want to show."
+                )
             else:
                 raise error
 
@@ -140,7 +157,7 @@ class DiscordAPI(commands.bot.Bot):
 
     async def read_meme_channel(self):
         for channel in self.get_all_channels():
-            if channel.name == 'memes' or channel.name == "cursed-images":
+            if channel.name == "memes" or channel.name == "cursed-images":
                 await self.process(channel)
 
     async def process(self, channel):
@@ -149,7 +166,7 @@ class DiscordAPI(commands.bot.Bot):
             link: Union[str, bool] = find_link(message.content)
 
             if type(link) is str:
-                if 'discord' in link:
+                if "discord" in link:
                     link: str = link.split("?")[0]
                 if len(link) >= 512:
                     continue
