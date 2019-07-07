@@ -109,8 +109,11 @@ class DiscordAPI(commands.bot.Bot):
                 await ctx.send(self.lang["info"]["db-no-posters"])
 
         @self.command(pass_context=True)
-        async def info(ctx, arg):
-            await ctx.send(history(arg))
+        async def info(ctx, arg: str):
+            if arg.isdigit():
+                await ctx.send(history(int(arg)))
+            else:
+                await ctx.send(self.lang["error"]["miss-arg-info"])
 
         @info.error
         async def info_error(ctx, error):
