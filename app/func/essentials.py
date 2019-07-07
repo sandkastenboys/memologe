@@ -116,16 +116,16 @@ def download(link: str) -> str:
     if r.status_code == 200:
         try:
             try:
-                with open(config["destination"] + filename, "wb") as f:
+                with open("{}{}".format(config["destination"], filename), "wb") as f:
                     r.raw.decode_content = True
                     shutil.copyfileobj(r.raw, f)
             except IOError:
                 filename = str(uuid4()) + ".und"
-                with open(config["destination"] + filename, "wb") as f:
+                with open("{}{}".format(config["destination"], filename), "wb") as f:
                     r.raw.decode_content = True
                     shutil.copyfileobj(r.raw, f)
         except IOError:
-            print("Probably no file behind:", link)
+            print("Probably no file behind ", link)
     return filename
 
 
@@ -189,13 +189,14 @@ def list_users() -> str:
     ).all()
     ret_val: str = "Username" + " " * 12 + "Platform" + " " * 12 + "Interactions" + " " * 8
     for x in range(min(len(u), 10)):
-        ret_val += (
-            "\n"
-            + u[x].username
-            + " " * (20 - len(u[x].username))
-            + str(resolve_platform[u[x].platform])
-            + " " * (20 - len(str(resolve_platform[u[x].platform])))
-            + str(u[x].posts)
+        user: str = u[x].username
+        platform: str = resolve_platform[u[x].platform]
+        ret_val += "\n{}{}{}{}{}".format(
+            user,
+            " " * (20 - len(user)),
+            platform,
+            " " * (20 - len(platform)),
+            u[x].posts,
         )
     return ret_val
 
