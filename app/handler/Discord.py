@@ -1,6 +1,7 @@
 # pylint: disable=unused-variable
 
 from discord.ext import commands
+from discord.ext.commands.context import Context
 from objects import session
 from typing import Union
 
@@ -43,7 +44,7 @@ class DiscordAPI(commands.bot.Bot):
         @self.command(name='random', pass_context=True)
         async def _random(ctx, count="1"):
             for msg in yield_random_meme(int(count)):
-                post = await ctx.send(msg)
+                post: Context = await ctx.send(msg)
                 await post.add_reaction(chr(11014))
                 await post.add_reaction(chr(11015))
 
