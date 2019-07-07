@@ -1,11 +1,21 @@
 dist: xenial
 language: python
 python: 3.7
+cache: pip
 services: 
   - mysql
-cache: pip
 install:
   - mysql -e 'CREATE DATABASE memes;'
   - pip3 install -r requirements.txt
-script:
-  - python3 Memologe_Test.py
+
+jobs:
+  include:
+    - stage: lint
+      install:
+        - pip3 install -r requirements-dev.txt
+      script:
+        - flake8 .
+        - mypy .
+    - stage: build
+      script:
+        - python3 Memologe_Test.py
