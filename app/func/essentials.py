@@ -14,16 +14,18 @@ from objects import session
 
 def prep4post(meme: Memes) -> str:
     user: User = id_to_user(meme.stealer)
-    return (
-        "Here your meme posted by: "
-        + str(user.username)
-        + " id = "
-        + str(meme.id)
-        + " : "
-        + ";".join(query_tags(meme.id))
-        + " "
-        + meme.link
-    )
+    print("Meme ID: {}".format(meme.id))
+    print("Meme tags: {}".format(";".join(query_tags(meme.id))))
+    print("Meme Stealer: {}".format(user.username))
+    print("Meme link: {}".format(meme.link))
+
+    msg: str = "Here is meme number {}".format(meme.id)
+    tags: List = query_tags(meme.id)
+    print(tags)
+    if tags:
+        msg += " with tags {}".format(";".join(tags))
+    msg += "originaly posted by {}\n{}".format(user.username, meme.link)
+    return msg
 
 
 def query_tags(meme_id: int) -> List[str]:
