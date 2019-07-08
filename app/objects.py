@@ -1,6 +1,6 @@
 import os
-from sqlalchemy import create_engine
-from sqlalchemy import select
+
+from sqlalchemy import create_engine, select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from sqlalchemy.orm import sessionmaker

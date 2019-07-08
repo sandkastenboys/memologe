@@ -1,5 +1,5 @@
-from configparser import ConfigParser
 import os
+from configparser import ConfigParser
 from typing import Dict
 
 resolve_platform: Dict[int, str] = {0: "Discord", 1: "Telegram"}

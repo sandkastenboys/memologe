@@ -1,28 +1,28 @@
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-from telegram.bot import Bot
-from telegram.update import Update
+from typing import Callable, List, Tuple, Union
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.bot import Bot
+from telegram.callbackquery import CallbackQuery
+from telegram.ext import CallbackQueryHandler, CommandHandler, Updater
 from telegram.ext.dispatcher import run_async
 from telegram.message import Message
-from telegram.callbackquery import CallbackQuery
-
-from typing import List, Callable, Union, Tuple
+from telegram.update import Update
 
 from config import config
-from objects import session
 from db_models import Memes
-from func.static import show_help
 from func.essentials import (
     add_meme,
-    yield_random_meme,
-    list_tags,
-    id_to_meme,
     categorise_meme,
+    history,
+    id_to_meme,
+    list_tags,
     list_users,
     rate_meme,
-    history,
+    yield_random_meme,
 )
 from func.search import yield_search
+from func.static import show_help
+from objects import session
 
 keyboard = [
     [InlineKeyboardButton("UpVote", callback_data="UpVote")],

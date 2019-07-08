@@ -1,9 +1,9 @@
 # pylint: disable=unused-variable
 
+from typing import Union
+
 from discord.ext import commands
 from discord.ext.commands.context import Context
-from objects import session
-from typing import Union
 
 from config import config
 from db_models import Memes
@@ -20,6 +20,7 @@ from func.essentials import (
 )
 from func.search import yield_search
 from func.static import show_help, translate
+from objects import session
 
 
 class DiscordAPI(commands.bot.Bot):

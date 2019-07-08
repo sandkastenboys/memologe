@@ -1,13 +1,14 @@
-import emoji
-import requests
 import shutil
 from datetime import datetime
-from sqlalchemy import func
-from typing import Iterator, List, Union, Tuple
+from typing import Iterator, List, Tuple, Union
 from uuid import uuid4
 
+import emoji
+import requests
+from sqlalchemy import func
+
 from config import config
-from db_models import Memes, Tags, Association, User, Ratings
+from db_models import Association, Memes, Ratings, Tags, User
 from func.static import resolve_platform
 from objects import session
 
