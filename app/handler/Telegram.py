@@ -32,10 +32,11 @@ keyboard_markup = InlineKeyboardMarkup(keyboard)
 
 
 def parse_count(args: List[str], position: int, default: int = 1) -> Tuple[int, str]:
+    count: int
     if len(args) < position + 1:
-        count: int = default
+        count = default
     elif len(args) >= position and args[position].isdigit():
-        count: int = abs(int(args[0]))
+        count = abs(int(args[0]))
     else:
         return (0, str(position) + " argument should be an positive integer")
     return (count, "")
@@ -50,11 +51,10 @@ def post_meme(bot: Bot, update: Update, args: List[str]) -> None:
         return
 
     link: str = args[0]
+    post_tags: str = ""
 
-    if len(args) == 1:
-        post_tags: str = ""
-    else:
-        post_tags: str = args[1]
+    if not len(args) == 1:
+        post_tags = args[1]
 
     message.reply_text(
         add_meme(link, post_tags, message.from_user.username, 1, message.date)
@@ -93,16 +93,17 @@ def _size(bot: Bot, update: Update, args: List[str]) -> None:
 @run_async
 def search(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
+    count: int
     if len(args) < 2:
-        count: int = 1
+        count = 1
     elif args[1].isdigit():
         if int(args[1]) < 0:
             message.reply_text("Your given number is below 0")
             return
         else:
-            count: int = int(args[1])
+            count = int(args[1])
     else:
-        count: int = 1
+        count = 1
     tags = args[0]
 
     print("Searching for {} of {}".format(count, tags))
