@@ -24,7 +24,7 @@ from objects import session
 
 
 class DiscordAPI(commands.bot.Bot):
-    def __init__(self):
+    def __init__(self):  # noqa: MC0001
         super().__init__(command_prefix=config["key"])
         self.remove_command("help")
         self.lang = translate()
