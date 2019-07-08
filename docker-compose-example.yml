@@ -42,21 +42,17 @@ services:
       - host
     environment:
       sqlite: 'False'
-      # Mysql Stuff
       MYSQL_HOSTNAME: db
       MYSQL_USERNAME: memologe
       MYSQL_PASSWORD: memes_are_the_best
       MYSQL_PORT: 3306
       MYSQL_DATABASE: memes
-      # Core Func.
       save_memes_to_disc: 'False'
       destination: /app/app/data/
-      read_on_start: 'True'
-      # Tokens required
-      telegram_token: 
+      read_on_start: 'False'
+      # at leat one token required
+      telegram_token:
       discord_token:
-      # Discord
-      botname: Test # Required for Discord
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s

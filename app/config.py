@@ -2,8 +2,8 @@ import os
 from typing import Dict, List, Tuple, Union
 
 to_load: List[Union[Union[Tuple[str, Union[int, str]]]]] = [
-    ("sqlite", "False"),
     # sqlalchemy
+    ("sqlite", "False"),
     ("MYSQL_HOSTNAME", "127.0.0.1"),
     ("MYSQL_PORT", 3306),
     ("MYSQL_DATABASE", "memes"),
@@ -15,11 +15,10 @@ to_load: List[Union[Union[Tuple[str, Union[int, str]]]]] = [
     ("destination", "/mnt/hdd/memes/"),
     ("read_on_start", "False"),
     # discord
-    ("botname", ""),
     ("key", "$"),
     # tokens
-    ("telegram_token", ""),  # Telegram Bot token
-    ("discord_token", ""),  # Discord Bot Token
+    ("telegram_token", ""),
+    ("discord_token", ""),
 ]
 
 # the final configuration dict
