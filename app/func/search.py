@@ -26,7 +26,7 @@ def soft_search(tags: list, amount: int):
     send_memes: list = []
     random.shuffle(mem)
     count: int = 0
-    while amount > 0 and count < len(mem):
+    while range(min(len(mem), amount)):
         if mem[count].id not in send_memes:
             send_memes.append(mem[count].id)
             yield prep4post(mem[count])
