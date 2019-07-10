@@ -28,6 +28,10 @@ services:
       MYSQL_PASSWORD: memes_are_the_best
       MYSQL_USER: memologe
       MYSQL_ROOT_PASSWORD: test1
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "--user=memologe", "--password=memes_are_the_best"]
+      timeout: 20s
+      retries: 10
     restart: unless-stopped
 
   memologe:
@@ -53,8 +57,4 @@ services:
       # at leat one token required
       telegram_token:
       discord_token:
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
     restart: unless-stopped
