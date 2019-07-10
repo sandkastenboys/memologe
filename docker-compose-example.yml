@@ -29,9 +29,7 @@ services:
       MYSQL_USER: memologe
       MYSQL_ROOT_PASSWORD: test1
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "--user=memologe", "--password=memes_are_the_best"]
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
     restart: unless-stopped
 
   memologe:
