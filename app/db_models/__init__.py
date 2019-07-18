@@ -20,7 +20,7 @@ class User(Base):  # type: ignore
 
     @staticmethod
     def create(platform: int, username: str) -> "User":
-        user: User = User(platform=platform, username=username, posts=0)
+        user: User = User(platform=platform, username=username[:32], posts=0)
         session.add(user)
         session.commit()
         return user
@@ -45,7 +45,7 @@ class Memes(Base):  # type: ignore
         if post_time is None:
             post_time = datetime.utcnow()
 
-        meme: Memes = Memes(link=link, post_time=post_time, path=path, stealer=stealer)
+        meme: Memes = Memes(link=link[:512], post_time=post_time, path=path[:45], stealer=stealer)
 
         session.add(meme)
         session.commit()
