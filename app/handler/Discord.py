@@ -166,8 +166,6 @@ class DiscordAPI(commands.bot.Bot):
             if type(link) is str:
                 if "discord" in link:
                     link: str = link.split("?")[0]
-                if len(link) >= 512:
-                    continue
-
-                print(link)
-                add_meme(link, "", message.author.name, 0, message.created_at)
+                if len(link) < 512:
+                    print(link)
+                    add_meme(link, "", message.author.name, 0, message.created_at)
