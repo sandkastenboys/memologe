@@ -113,21 +113,27 @@ def create_association(tag_id: int, meme_id: int, user: int):
 
 def download(link: str) -> str:
     filename: str = str(uuid4()) + "." + link.split(".")[-1]
-    r = requests.get(link, stream=True)
-    if r.status_code == 200:
-        try:
+    try:
+        r = requests.get(link, stream=True)
+        if r.status_code == 200:
             try:
-                with open("{}{}".format(config["destination"], filename), "wb") as f:
-                    r.raw.decode_content = True
-                    shutil.copyfileobj(r.raw, f)
+                try:
+                    with open("{}{}".format(config["destination"], filename), "wb") as f:
+                        r.raw.decode_content = True
+                        shutil.copyfileobj(r.raw, f)
+                except IOError:
+                    filename = str(uuid4()) + ".und"
+                    with open("{}{}".format(config["destination"], filename), "wb") as f:
+                        r.raw.decode_content = True
+                        shutil.copyfileobj(r.raw, f)
             except IOError:
-                filename = str(uuid4()) + ".und"
-                with open("{}{}".format(config["destination"], filename), "wb") as f:
-                    r.raw.decode_content = True
-                    shutil.copyfileobj(r.raw, f)
-        except IOError:
-            print("Probably no file behind ", link)
-    return filename
+                print("Probably no file behind ", link)
+        return filename
+    except requests.exceptions.SSLError:
+        print("SSL Signature Wrong Skiping this meme")
+
+    # Returns Empty string when something went wrong
+    return ""
 
 
 def check_existens(link: str) -> bool:
