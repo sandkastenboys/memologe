@@ -22,7 +22,7 @@ def show_help() -> str:
         "Example categorise meme:\n"
         "$cate_meme 23 minecraft;engineer\n\n"
         "```\n"
-        "When you have further questions, see contacts here: https://spartanerspaten.github.io/"
+        "When you have further questions, see contacts here: https://spartanerspaten.github.io/ \n"
         "Please reports bugs here: https://github.com/SpartanerSpaten/Memologe/"
     )
 

@@ -42,7 +42,7 @@ class DiscordAPI(commands.bot.Bot):
         @self.command(pass_context=True)
         async def search(ctx, tags, count):
             print("Searching for {} of {}".format(count, tags))
-            for msg in yield_search(tags, count):
+            for msg in yield_search(tags, int(count)):
                 await ctx.send(msg)
 
         @search.error
