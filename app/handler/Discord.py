@@ -20,7 +20,7 @@ from func.essentials import (
 )
 from func.search import yield_search
 from func.static import show_help, translate
-from objects import session
+from objects import session, check_mysql_connection
 
 
 class DiscordAPI(commands.bot.Bot):
@@ -40,7 +40,8 @@ class DiscordAPI(commands.bot.Bot):
             await ctx.send(show_help())
 
         @self.command(pass_context=True)
-        async def search(ctx, tags, count):
+        async def search(ctx, tags, count="1"):
+            check_mysql_connection()
             print("Searching for {} of {}".format(count, tags))
             for msg in yield_search(tags, int(count)):
                 await ctx.send(msg)
@@ -54,6 +55,7 @@ class DiscordAPI(commands.bot.Bot):
 
         @self.command(name="random", pass_context=True)
         async def _random(ctx, count="1"):
+            check_mysql_connection()
             for msg in yield_random_meme(int(count)):
                 post: Context = await ctx.send(msg)
                 await post.add_reaction(chr(11014))
@@ -61,6 +63,7 @@ class DiscordAPI(commands.bot.Bot):
 
         @self.command(pass_context=True)
         async def size(ctx):
+            check_mysql_connection()
             size: int = session.query(Memes).count()
             await ctx.send(self.lang["info"]["db-meme-count"].format(size))
 
@@ -71,7 +74,7 @@ class DiscordAPI(commands.bot.Bot):
             if len(link) >= 512:
                 await ctx.send(self.lang["error"]["link-to-long"])
                 return
-
+            check_mysql_connection()
             add_meme(link, tag, ctx.author.name, 0, ctx.created_at)
 
         @post.error
@@ -83,6 +86,7 @@ class DiscordAPI(commands.bot.Bot):
 
         @self.command(pass_context=True)
         async def category(ctx, id, tags):
+            check_mysql_connection()
             categorise_meme(id, tags, ctx.author.name, 0)
             await ctx.send(self.lang["success"]["tag-added"])
 
@@ -95,6 +99,7 @@ class DiscordAPI(commands.bot.Bot):
 
         @self.command(pass_context=True)
         async def tags(ctx):
+            check_mysql_connection()
             tags: str = list_tags()
             if not tags.isspace():
                 await ctx.send("```{}```".format(tags))
@@ -103,6 +108,7 @@ class DiscordAPI(commands.bot.Bot):
 
         @self.command(pass_context=True)
         async def posters(ctx):
+            check_mysql_connection()
             users: str = list_users()
             if users:
                 await ctx.send("```{}```".format(users))
@@ -112,6 +118,7 @@ class DiscordAPI(commands.bot.Bot):
         @self.command(pass_context=True)
         async def info(ctx, arg: str):
             if arg.isdigit():
+                check_mysql_connection()
                 await ctx.send(history(int(arg)))
             else:
                 await ctx.send(self.lang["error"]["miss-arg-info"])
@@ -125,6 +132,7 @@ class DiscordAPI(commands.bot.Bot):
 
         @self.command(pass_context=True)
         async def idtomeme(ctx, arg):
+            check_mysql_connection()
             x = await ctx.send(id_to_meme(int(arg)))
             await x.add_reaction(chr(11014))
             await x.add_reaction(chr(11015))

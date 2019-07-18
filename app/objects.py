@@ -1,5 +1,6 @@
 import os
 
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy import create_engine, select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
@@ -28,9 +29,10 @@ def reload() -> None:
 
 
 def check_mysql_connection() -> None:
-    try:
-        connection.scalar(select([1]))
-        return
-    except TypeError:  # FIXME put correct exception
-        print("Connection Timeout")
-    reload()
+    if config["sqlite"] == "True":
+        try:
+            connection.scalar(select([1]))
+            return
+        except DBAPIError:  # FIXME put correct exception
+            print("Connection Timeout")
+        reload()
