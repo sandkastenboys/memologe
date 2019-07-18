@@ -218,7 +218,7 @@ def history(meme_id: int) -> str:
     message: str = "\nPosted by: " + str(user.username) + "\nTime: " + str(
         meme.post_time
     ) + "\nRating: " + str(sum_ratings(meme.id)) + "\n\n"
-    message += "Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
+    message += "```Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
 
     tags: List[Tuple[Tags, Association, User]] = (
         session.query(Tags, Association, User)
@@ -267,7 +267,7 @@ def merge_time_line(
                 x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
             )
 
-    return "```\n{}\n```".format(message)
+    return "\n{}\n```".format(message)
 
 
 def rate_to_text(vote: int) -> str:

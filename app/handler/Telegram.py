@@ -138,7 +138,7 @@ def idtomeme(bot: Bot, update: Update, args: List[str]) -> None:
     if len(args) == 0:
         message.reply_text("You have to give an id")
         return
-    elif args[0].isdigit():
+    elif not args[0].isdigit():
         message.reply_text("You have to give an integer")
         return
 
