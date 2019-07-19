@@ -22,7 +22,7 @@ from func.essentials import (
 )
 from func.search import yield_search
 from func.static import show_help
-from objects import session
+from objects import database_handler
 
 keyboard = [
     [InlineKeyboardButton("UpVote", callback_data="UpVote")],
@@ -56,6 +56,7 @@ def post_meme(bot: Bot, update: Update, args: List[str]) -> None:
     if not len(args) == 1:
         post_tags = args[1]
 
+    database_handler.check_mysql_connection()
     message.reply_text(
         add_meme(link, post_tags, message.from_user.username, 1, message.date)
     )
@@ -71,7 +72,7 @@ def random(bot: Bot, update: Update, args: List[str]) -> None:
         return
 
     count: int = number[0]
-
+    database_handler.check_mysql_connection()
     for msg in yield_random_meme(count):
         message.reply_text(msg, reply_markup=keyboard_markup)
 
@@ -83,8 +84,8 @@ def userhelp(bot: Bot, update: Update, args: List[str]) -> None:
 
 @run_async
 def _size(bot: Bot, update: Update, args: List[str]) -> None:
-
-    size: int = session.query(Memes).count()
+    database_handler.check_mysql_connection()
+    size: int = database_handler.session.query(Memes).count()
     update.message.reply_text(
         "There are : {} memes in the database".format(size), parse_mode="Markdown"
     )
@@ -105,7 +106,7 @@ def search(bot: Bot, update: Update, args: List[str]) -> None:
     else:
         count = 1
     tags = args[0]
-
+    database_handler.check_mysql_connection()
     print("Searching for {} of {}".format(count, tags))
     for msg in yield_search(tags, count):
         message.reply_text(msg, reply_markup=keyboard_markup)
@@ -114,6 +115,7 @@ def search(bot: Bot, update: Update, args: List[str]) -> None:
 @run_async
 def _tags(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
+    database_handler.check_mysql_connection()
     tags: str = list_tags()
     if tags.isspace():
         message.reply_text("There are no tags in the database.")
@@ -141,7 +143,7 @@ def idtomeme(bot: Bot, update: Update, args: List[str]) -> None:
     elif not args[0].isdigit():
         message.reply_text("You have to give an integer")
         return
-
+    database_handler.check_mysql_connection()
     count: int = int(args[0])
     message.reply_text(id_to_meme(count), reply_markup=keyboard_markup)
 
@@ -164,6 +166,7 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
     else:
         message.reply_text("meme_id has to be an integer")
         return
+    database_handler.check_mysql_connection()
     categorise_meme(meme_id, tags, message.from_user.username, 1)
     message.reply_text("thx for your help")
 
@@ -181,6 +184,7 @@ def _info(bot: Bot, update: Update, args: List[str]) -> None:
     else:
         message.reply_text("meme_id has to be an integer")
         return
+    database_handler.check_mysql_connection()
     text: str = history(meme_id)
     message.reply_text(text, parse_mode="Markdown")
 
@@ -190,6 +194,7 @@ def upvote(bot: Bot, update: Update) -> None:
     query: CallbackQuery = update.callback_query
     username: str = query.from_user.username
     meme_id: int = int(query.message.text.split(" ")[8])
+    database_handler.check_mysql_connection()
     rate_meme(meme_id, 1, username, 1)
 
 
@@ -198,6 +203,7 @@ def downvote(bot: Bot, update: Update) -> None:
     query: CallbackQuery = update.callback_query
     username: str = query.from_user.username
     meme_id: int = int(query.message.text.split(" ")[8])
+    database_handler.check_mysql_connection()
     rate_meme(meme_id, -1, username, 1)
 
 

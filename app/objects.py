@@ -8,33 +8,36 @@ from sqlalchemy.orm import sessionmaker
 
 from config import config
 
-if config["sqlite"] == "True":
-    engine = create_engine("sqlite:///" + os.path.join("./", "new_db"))
-else:  # Mysql
-    engine = create_engine(config["SQLALCHEMY_DATABASE_URI"])
 
-Session: sessionmaker = sessionmaker(bind=engine)
-Base: DeclarativeMeta = declarative_base()
+class DataBase:
+    def __init__(self):
+
+        if config["sqlite"] == "True":
+            self.engine = create_engine("sqlite:///" + os.path.join("./", "new_db"))
+        else:  # Mysql
+            self.engine = create_engine(config["SQLALCHEMY_DATABASE_URI"])
+
+        self.Session: sessionmaker = sessionmaker(bind=self.engine)
+        self.Base: DeclarativeMeta = declarative_base()
+
+        self.session = self.Session()
+        self.connection = self.session.connection()
+
+    def reload(self) -> None:
+
+        self.session.close()
+
+        self.session = self.Session()
+        self.connection = self.session.connection()
+
+    def check_mysql_connection(self) -> None:
+        if config["sqlite"] == "True":
+            try:
+                self.connection.scalar(select([1]))
+                return
+            except DBAPIError or OperationalError:  # FIXME put correct exception
+                print("Connection Timeout")
+            self.reload()
 
 
-session = Session()
-connection = session.connection()
-
-
-def reload() -> None:
-    global Session, session, connection
-
-    session.close()
-
-    session = Session()
-    connection = session.connection()
-
-
-def check_mysql_connection() -> None:
-    if config["sqlite"] == "True":
-        try:
-            connection.scalar(select([1]))
-            return
-        except DBAPIError or OperationalError:  # FIXME put correct exception
-            print("Connection Timeout")
-        reload()
+database_handler: DataBase = DataBase()

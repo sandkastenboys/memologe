@@ -10,7 +10,7 @@ from sqlalchemy import func
 from config import config
 from db_models import Association, Memes, Ratings, Tags, User
 from func.static import resolve_platform
-from objects import session
+from objects import database_handler
 
 
 def prep4post(meme: Memes) -> str:
@@ -28,7 +28,7 @@ def prep4post(meme: Memes) -> str:
 def query_tags(meme_id: int) -> List[str]:
     return_list: List[str] = []
     for x in (
-        session.query(Tags)
+        database_handler.session.query(Tags)
         .filter(Association.meme_id == meme_id, Tags.id == Association.tag_id)
         .all()
     ):
@@ -49,10 +49,14 @@ def parse_amount(string: str) -> int:
 
 def random_meme() -> Union[Memes, str]:
     if config["sqlite"] == "True":  # DB manager dialect depending
-        meme: Memes = session.query(Memes).order_by(func.random()).first()
+        meme: Memes = database_handler.session.query(Memes).order_by(
+            func.random()
+        ).first()
 
     else:
-        meme: Memes = session.query(Memes).order_by(func.rand()).first()
+        meme: Memes = database_handler.session.query(Memes).order_by(
+            func.rand()
+        ).first()
 
     if meme is None:
         return "There are 0 memes in the database"
@@ -93,7 +97,7 @@ def add_meme(
 
 
 def create_tag(tag: str) -> int:
-    db_tag: Tags = session.query(Tags).filter_by(tag=tag).first()
+    db_tag: Tags = database_handler.session.query(Tags).filter_by(tag=tag).first()
 
     if db_tag is None:
         return Tags.create(tag).id
@@ -102,7 +106,7 @@ def create_tag(tag: str) -> int:
 
 
 def create_association(tag_id: int, meme_id: int, user: int):
-    assoc: List[Association] = session.query(Association).filter_by(
+    assoc: List[Association] = database_handler.session.query(Association).filter_by(
         tag_id=tag_id, meme_id=meme_id
     ).first()
     if assoc is None:
@@ -141,7 +145,7 @@ def download(link: str) -> str:
 
 
 def check_existens(link: str) -> bool:
-    meme: Memes = session.query(Memes).filter_by(link=link).first()
+    meme: Memes = database_handler.session.query(Memes).filter_by(link=link).first()
 
     return meme is not None
 
@@ -160,7 +164,7 @@ def find_link(post: str) -> Union[str, bool]:
 
 
 def check_auther_registerd(author_name: str, platform: int) -> int:
-    author: User = session.query(User).filter_by(
+    author: User = database_handler.session.query(User).filter_by(
         username=author_name, platform=platform
     ).first()
 
@@ -176,7 +180,9 @@ def check_auther_registerd(author_name: str, platform: int) -> int:
 def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> None:
     auther_uuid: int = check_auther_registerd(author, platform)
 
-    meme: Memes = session.query(Memes).filter(Memes.id == int(meme_id)).first()
+    meme: Memes = database_handler.session.query(Memes).filter(
+        Memes.id == int(meme_id)
+    ).first()
 
     if tags != "":
 
@@ -189,13 +195,13 @@ def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> None
 
 def list_tags() -> str:
     ret_val: str = ""
-    for tag in session.query(Tags.tag).all():
+    for tag in database_handler.session.query(Tags.tag).all():
         ret_val += "\n" + tag[0]
     return ret_val
 
 
 def list_users() -> str:
-    u: List[User] = session.query(User).order_by(
+    u: List[User] = database_handler.session.query(User).order_by(
         User.posts.desc()  # type: ignore
     ).all()
     ret_val: str = "Username" + " " * 12 + "Platform" + " " * 12 + "Interactions" + " " * 8
@@ -213,7 +219,9 @@ def list_users() -> str:
 
 
 def history(meme_id: int) -> str:
-    meme: Memes = session.query(Memes).filter(Memes.id == meme_id).first()
+    meme: Memes = database_handler.session.query(Memes).filter(
+        Memes.id == meme_id
+    ).first()
 
     if meme is None:
         return "Sorry there is no meme with this id yet"
@@ -245,7 +253,7 @@ def history(meme_id: int) -> str:
     )
 
     tags: List[Tuple[Tags, Association, User]] = (
-        session.query(Tags, Association, User)
+        database_handler.session.query(Tags, Association, User)
         .filter(
             Association.meme_id == int(meme_id),
             Association.tag_id == Tags.id,
@@ -254,7 +262,7 @@ def history(meme_id: int) -> str:
         .all()
     )
     ratig: List[Tuple[Ratings, User]] = (
-        session.query(Ratings, User)
+        database_handler.session.query(Ratings, User)
         .filter(int(meme_id) == Ratings.meme_id, Ratings.added_by == User.user_id)
         .all()
     )
@@ -320,7 +328,7 @@ def sort_by_data(
 def rate_meme(meme_id: int, rate: int, user: str, platform: int) -> None:
     author_uuid: int = check_auther_registerd(user, platform)
 
-    rating: Ratings = session.query(Ratings).filter(
+    rating: Ratings = database_handler.session.query(Ratings).filter(
         Ratings.added_by == author_uuid, Ratings.meme_id == meme_id
     ).first()
     if not rating:
@@ -329,17 +337,19 @@ def rate_meme(meme_id: int, rate: int, user: str, platform: int) -> None:
 
 def sum_ratings(meme_id: int) -> int:
     sum_rat: int = 0
-    for x in session.query(Ratings).filter(Ratings.meme_id == meme_id).all():
+    for x in (
+        database_handler.session.query(Ratings).filter(Ratings.meme_id == meme_id).all()
+    ):
         sum_rat += x.rate
     return sum_rat
 
 
 def id_to_user(user_id: int) -> "User":
-    return session.query(User).filter(User.user_id == user_id).first()
+    return database_handler.session.query(User).filter(User.user_id == user_id).first()
 
 
 def id_to_meme(meme_id: int) -> str:
-    meme = session.query(Memes).filter(Memes.id == meme_id).first()
+    meme = database_handler.session.query(Memes).filter(Memes.id == meme_id).first()
     if meme is None:
         return "There is no meme with this id"
     else:

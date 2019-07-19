@@ -3,7 +3,7 @@ from typing import Iterator, List
 
 from db_models import Association, Memes, Tags
 from func.essentials import prep4post
-from objects import session
+from objects import database_handler
 
 
 def strict_search(tags: list, amount: int):
@@ -17,7 +17,7 @@ def soft_search(tags: list, amount: int):
     for x in tags:
         query_tags.append(x.id)
 
-    mem: list = session.query(Memes).filter(
+    mem: list = database_handler.session.query(Memes).filter(
         Association.tag_id.in_(query_tags),  # type: ignore
         Association.meme_id == Memes.id,
     ).all()
@@ -37,7 +37,7 @@ def yield_search(tags: str, count: int = 1) -> Iterator[str]:
     tag_list: list = tags.split(";")
 
     # eqivalent to WHERE id IN (..., ..., ...) Tag list
-    tags_list: list = session.query(Tags).filter(
+    tags_list: list = database_handler.session.query(Tags).filter(
         Tags.tag.in_(tag_list)  # type: ignore
     ).all()
 
