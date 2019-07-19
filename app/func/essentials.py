@@ -284,6 +284,8 @@ def merge_time_line(
                 " " * (20 - len(rate_to_text(rate))),
                 username,
                 " " * (20 - len(username)),
+                resolve_platform[x[2].platform],
+                " " * (20 - len(resolve_platform[x[2].platform])),
                 x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
             )
         elif type(x[0]) is Tags:
