@@ -126,6 +126,7 @@ def _tags(bot: Bot, update: Update, args: List[str]) -> None:
 @run_async
 def posters(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
+    database_handler.check_mysql_connection()
     users: str = list_users()
     if users:
         message.reply_text("```{}```".format(users), parse_mode="Markdown")
@@ -172,7 +173,7 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
         return
     database_handler.check_mysql_connection()
 
-    message.reply_text("Adding categories: " + tags + str(meme_id) + str(message.from_user.username))
+    message.reply_text("Adding categories: " + tags + str(meme_id))
     categorise_meme(meme_id, tags, str(message.from_user.username), 1)
     message.reply_text("thx for your help")
 
@@ -213,6 +214,9 @@ def downvote(bot: Bot, update: Update) -> None:
     rate_meme(meme_id, -1, username, 1)
 
 
+def dispatcher_error(bot: Bot, updater: Update, error):
+    raise error
+
 def init_telegram():
 
     updater: Updater = Updater(config["telegram_token"])
@@ -237,4 +241,5 @@ def init_telegram():
 
     updater.dispatcher.add_handler(CallbackQueryHandler(upvote, pattern="UpVote"))
     updater.dispatcher.add_handler(CallbackQueryHandler(downvote, pattern="DownVote"))
+    updater.dispatcher.add_error_handler(dispatcher_error)
     updater.start_polling()
