@@ -41,8 +41,5 @@ def yield_search(tags: str, count: int = 1) -> Iterator[str]:
         Tags.tag.in_(tag_list)  # type: ignore
     ).all()
 
-    for _ in range(count):
-        print("Soft search: tags {}".format(tags))
-        print("Soft search: count {}".format(count))
-        for meme in soft_search(tags_list, count):
-            yield str(meme)
+    for meme in soft_search(tags_list, count):
+        yield str(meme)

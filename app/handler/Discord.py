@@ -148,7 +148,7 @@ class DiscordAPI(commands.bot.Bot):
         async def on_reaction_add(reaction, user):
             if user != self.user:
                 print(user.name, "/", user)
-
+                check_mysql_connection()
                 msg = reaction.message
                 meme_id: int = int(msg.content.split(" ")[4])
 

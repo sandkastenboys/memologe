@@ -45,7 +45,9 @@ class Memes(Base):  # type: ignore
         if post_time is None:
             post_time = datetime.utcnow()
 
-        meme: Memes = Memes(link=link[:512], post_time=post_time, path=path[:45], stealer=stealer)
+        meme: Memes = Memes(
+            link=link[:512], post_time=post_time, path=path[:45], stealer=stealer
+        )
 
         session.add(meme)
         session.commit()

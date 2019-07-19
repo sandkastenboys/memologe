@@ -15,10 +15,6 @@ from objects import session
 
 def prep4post(meme: Memes) -> str:
     user: User = id_to_user(meme.stealer)
-    print("Meme ID: {}".format(meme.id))
-    print("Meme tags: {}".format(";".join(query_tags(meme.id))))
-    print("Meme Stealer: {}".format(user.username))
-    print("Meme link: {}".format(meme.link))
 
     msg: str = "Here is meme number {}".format(meme.id)
     tags: List[str] = query_tags(meme.id)
@@ -52,7 +48,7 @@ def parse_amount(string: str) -> int:
 
 
 def random_meme() -> Union[Memes, str]:
-    if config["sqlite"] == "True": # DB manager dialect depending
+    if config["sqlite"] == "True":  # DB manager dialect depending
         meme: Memes = session.query(Memes).order_by(func.random()).first()
 
     else:
@@ -122,12 +118,16 @@ def download(link: str) -> str:
         if r.status_code == 200:
             try:
                 try:
-                    with open("{}{}".format(config["destination"], filename), "wb") as f:
+                    with open(
+                        "{}{}".format(config["destination"], filename), "wb"
+                    ) as f:
                         r.raw.decode_content = True
                         shutil.copyfileobj(r.raw, f)
                 except IOError:
                     filename = str(uuid4()) + ".und"
-                    with open("{}{}".format(config["destination"], filename), "wb") as f:
+                    with open(
+                        "{}{}".format(config["destination"], filename), "wb"
+                    ) as f:
                         r.raw.decode_content = True
                         shutil.copyfileobj(r.raw, f)
             except IOError:
@@ -222,7 +222,27 @@ def history(meme_id: int) -> str:
     message: str = "\nPosted by: " + str(user.username) + "\nTime: " + str(
         meme.post_time
     ) + "\nRating: " + str(sum_ratings(meme.id)) + "\n\n"
-    message += "```Tag / Vote" + " " * 10 + "User" + " " * 16 + "Time\n\n"
+    message += (
+        "```Tag / Vote"
+        + " " * 10
+        + "User"
+        + " " * 16
+        + "Platform"
+        + " " * 12
+        + "Time\n\n"
+    )
+    message += (
+        "__initial post__"
+        + " " * 4
+        + user.username
+        + " " * 20
+        - len(user.username)
+        + resolve_platform(user.platform)
+        + " " * 20
+        - len(resolve_platform(user.platform))
+        + meme.post_time.strftime("%Y-%m-%d %H:%M:%S")
+        + "\n"
+    )
 
     tags: List[Tuple[Tags, Association, User]] = (
         session.query(Tags, Association, User)
@@ -262,14 +282,15 @@ def merge_time_line(
                 x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
             )
         elif type(x[0]) is Tags:
-            tag: str = x[0].tag
-            message += "{}{}{}{}{} UTC\n".format(
-                tag,
-                " " * (20 - len(tag)),
-                username,
-                " " * (20 - len(username)),
-                x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
-            )
+            if x[0].tag != "":
+                tag: str = x[0].tag
+                message += "{}{}{}{}{} UTC\n".format(
+                    tag,
+                    " " * (20 - len(tag)),
+                    username,
+                    " " * (20 - len(username)),
+                    x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
+                )
 
     return "\n{}\n```".format(message)
 
