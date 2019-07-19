@@ -65,7 +65,7 @@ def random_meme() -> Union[Memes, str]:
 
 
 def yield_random_meme(count: int) -> Iterator[str]:
-    for _ in range(count):
+    for _ in range(min(config["max_post"], count)):
         meme: Memes = random_meme()
         yield prep4post(meme)
 
@@ -246,8 +246,7 @@ def history(meme_id: int) -> str:
         + " " * 20
         - len(user.username)
         + resolve_platform(user.platform)
-        + " " * 20
-        - len(resolve_platform(user.platform))
+        + " " * (20 - len(resolve_platform(user.platform)))
         + meme.post_time.strftime("%Y-%m-%d %H:%M:%S")
         + "\n"
     )

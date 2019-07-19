@@ -4,7 +4,7 @@ from typing import Iterator, List
 from db_models import Association, Memes, Tags
 from func.essentials import prep4post
 from objects import database_handler
-
+from config import config
 
 def strict_search(tags: list, amount: int):
     pass
@@ -26,7 +26,7 @@ def soft_search(tags: list, amount: int):
     send_memes: list = []
     random.shuffle(mem)
     count: int = 0
-    while range(min(len(mem), amount)):
+    while range(min(len(mem), amount, config["max_posts"])):
         if mem[count].id not in send_memes:
             send_memes.append(mem[count].id)
             yield prep4post(mem[count])
