@@ -1,6 +1,5 @@
 import os
 
-from sqlalchemy.exc import DBAPIError, OperationalError, CommandInvokeError
 from sqlalchemy import create_engine, select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
@@ -34,7 +33,7 @@ class DataBase:
             try:
                 self.connection.scalar(select([1]))
                 return
-            except:  # FIXME put correct exception
+            except: # FIXME put correct exception
                 print("Connection Timeout")
             self.reload()
 
