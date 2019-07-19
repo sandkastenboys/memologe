@@ -243,10 +243,9 @@ def history(meme_id: int) -> str:
         "__initial post__"
         + " " * 4
         + user.username
-        + " " * 20
-        - len(user.username)
-        + resolve_platform(user.platform)
-        + " " * (20 - len(resolve_platform(user.platform)))
+        + " " * (20 - len(user.username))
+        + resolve_platform[user.platform]
+        + " " * (20 - len(resolve_platform[user.platform]))
         + meme.post_time.strftime("%Y-%m-%d %H:%M:%S")
         + "\n"
     )
