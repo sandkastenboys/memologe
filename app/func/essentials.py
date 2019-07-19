@@ -52,7 +52,11 @@ def parse_amount(string: str) -> int:
 
 
 def random_meme() -> Union[Memes, str]:
-    meme: Memes = session.query(Memes).order_by(func.random()).first()
+    if config["sqlite"] == "True": # DB manager dialect depending
+        meme: Memes = session.query(Memes).order_by(func.random()).first()
+
+    else:
+        meme: Memes = session.query(Memes).order_by(func.rand()).first()
 
     if meme is None:
         return "There are 0 memes in the database"

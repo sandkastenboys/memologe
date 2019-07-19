@@ -23,7 +23,9 @@ connection = session.connection()
 
 def reload() -> None:
     global Session, session, connection
-    Session = sessionmaker(bind=engine)
+
+    session.close()
+
     session = Session()
     connection = session.connection()
 
