@@ -171,6 +171,8 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
         message.reply_text("meme_id has to be a positive integer")
         return
     database_handler.check_mysql_connection()
+
+    message.reply_text("Adding categories: " + tags + str(meme_id) + str(message.from_user.username))
     categorise_meme(meme_id, tags, str(message.from_user.username), 1)
     message.reply_text("thx for your help")
 
