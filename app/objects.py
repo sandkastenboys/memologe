@@ -25,13 +25,12 @@ class DataBase:
 
     def reload(self) -> None:
 
-        self.session.close()
-
+        self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
         self.connection = self.session.connection()
 
     def check_mysql_connection(self) -> None:
-        if config["sqlite"] == "True":
+        if config["sqlite"] == "False":
             try:
                 self.connection.scalar(select([1]))
                 return

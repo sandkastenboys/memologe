@@ -178,7 +178,7 @@ def check_auther_registerd(author_name: str, platform: int) -> int:
 
 
 def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> None:
-    auther_uuid: int = check_auther_registerd(author, platform)
+    author_uuid: int = check_auther_registerd(author, platform)
 
     meme: Memes = database_handler.session.query(Memes).filter(
         Memes.id == int(meme_id)
@@ -190,7 +190,7 @@ def categorise_meme(meme_id: int, tags: str, author: str, platform: int) -> None
 
         for tag in tags_list:
             tag_id: int = create_tag(tag)
-            create_association(tag_id, meme.id, auther_uuid)
+            create_association(tag_id, meme.id, author_uuid)
 
 
 def list_tags() -> str:
