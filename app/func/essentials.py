@@ -247,7 +247,6 @@ def history(meme_id: int) -> str:
         + resolve_platform[user.platform]
         + " " * (20 - len(resolve_platform[user.platform]))
         + meme.post_time.strftime("%Y-%m-%d %H:%M:%S")
-        + "\n"
     )
 
     tags: List[Tuple[Tags, Association, User]] = (
@@ -295,6 +294,8 @@ def merge_time_line(
                     " " * (20 - len(tag)),
                     username,
                     " " * (20 - len(username)),
+                    resolve_platform[x[2].platform],
+                    " " * (20 - len(resolve_platform[x[2].platform])),
                     x[1].time_added.strftime("%Y-%m-%d %H:%M:%S"),
                 )
 
