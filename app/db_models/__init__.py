@@ -3,10 +3,10 @@ from typing import Union
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 
-from objects import Base, engine, session
+from objects import database_handler
 
 
-class User(Base):  # type: ignore
+class User(database_handler.Base):  # type: ignore
     __tablename__ = "user"
 
     platform: Union[int, Column] = Column(
@@ -21,17 +21,17 @@ class User(Base):  # type: ignore
     @staticmethod
     def create(platform: int, username: str) -> "User":
         user: User = User(platform=platform, username=username[:32], posts=0)
-        session.add(user)
-        session.commit()
+        database_handler.session.add(user)
+        database_handler.session.commit()
         return user
 
     def new_post(self):
         self.posts += 1
-        session.add(self)
-        session.commit()
+        database_handler.session.add(self)
+        database_handler.session.commit()
 
 
-class Memes(Base):  # type: ignore
+class Memes(database_handler.Base):  # type: ignore
     __tablename__ = "meme_list"
 
     id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
@@ -49,13 +49,13 @@ class Memes(Base):  # type: ignore
             link=link[:512], post_time=post_time, path=path[:45], stealer=stealer
         )
 
-        session.add(meme)
-        session.commit()
+        database_handler.session.add(meme)
+        database_handler.session.commit()
 
         return meme
 
 
-class Tags(Base):  # type: ignore
+class Tags(database_handler.Base):  # type: ignore
     __tablename__ = "tags"
 
     id: Union[int, Column] = Column(Integer, autoincrement=True, primary_key=True)
@@ -65,13 +65,13 @@ class Tags(Base):  # type: ignore
     def create(a_tag: str):
         tag: Tags = Tags(tag=a_tag)
 
-        session.add(tag)
-        session.commit()
+        database_handler.session.add(tag)
+        database_handler.session.commit()
 
         return tag
 
 
-class Association(Base):  # type: ignore
+class Association(database_handler.Base):  # type: ignore
     __tablename__ = "association"
     meme_id: Union[int, Column] = Column(
         Integer, ForeignKey("meme_list.id"), primary_key=True
@@ -88,13 +88,13 @@ class Association(Base):  # type: ignore
             meme_id=meme_id, tag_id=tag_id, added_by=user, time_added=datetime.now()
         )
 
-        session.add(ass)
-        session.commit()
+        database_handler.session.add(ass)
+        database_handler.session.commit()
 
         return ass
 
 
-class Ratings(Base):  # type: ignore
+class Ratings(database_handler.Base):  # type: ignore
     __tablename__ = "ratings"
     meme_id: Union[int, Column] = Column(
         Integer, ForeignKey("meme_list.id"), primary_key=True
@@ -111,10 +111,10 @@ class Ratings(Base):  # type: ignore
             meme_id=meme, added_by=user, rate=vote, time_added=datetime.now()
         )
 
-        session.add(v)
-        session.commit()
+        database_handler.session.add(v)
+        database_handler.session.commit()
 
         return v
 
 
-Base.metadata.create_all(engine)  # type: ignore
+database_handler.Base.metadata.create_all(database_handler.engine)  # type: ignore
