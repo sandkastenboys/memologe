@@ -160,14 +160,18 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
         if int(args[1]) < 0:
             message.reply_text("Your given number is below 0")
             return
-        else:
-            meme_id: int = int(args[1])
-        tags: str = args[1]
+
+        try:
+            meme_id: int = int(args[0])
+            tags: str = args[1]
+        except TypeError:
+            message.reply_text("Please check our input data")
+            return
     else:
-        message.reply_text("meme_id has to be an integer")
+        message.reply_text("meme_id has to be a positive integer")
         return
     database_handler.check_mysql_connection()
-    categorise_meme(meme_id, tags, message.from_user.username, 1)
+    categorise_meme(meme_id, tags, str(message.from_user.username), 1)
     message.reply_text("thx for your help")
 
 

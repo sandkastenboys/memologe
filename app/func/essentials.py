@@ -279,7 +279,7 @@ def merge_time_line(
         username: str = x[2].username
         if x[0] == 0:
             rate: int = x[1].rate
-            message += "{}{}{}{}{} UTC\n".format(
+            message += "{}{}{}{}{}{}{} UTC\n".format(
                 rate_to_text(rate),
                 " " * (20 - len(rate_to_text(rate))),
                 username,
@@ -291,7 +291,7 @@ def merge_time_line(
         elif type(x[0]) is Tags:
             if x[0].tag != "":
                 tag: str = x[0].tag
-                message += "{}{}{}{}{} UTC\n".format(
+                message += "{}{}{}{}{}{}{} UTC\n".format(
                     tag,
                     " " * (20 - len(tag)),
                     username,
