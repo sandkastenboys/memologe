@@ -39,6 +39,7 @@ services:
       - db
     volumes:
       - /mnt/hdd/:/app/app/data/
+      - /mnt/logs/:/app/app/logs/
     networks:
       - memologe
       - host
@@ -51,6 +52,7 @@ services:
       MYSQL_DATABASE: memes
       save_memes_to_disc: 'False'
       destination: /app/app/data/
+      config_log_destination: /app/app/logs/
       read_on_start: 'False'
       # at leat one token required
       telegram_token:

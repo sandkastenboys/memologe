@@ -7,6 +7,9 @@ from sqlalchemy.orm import sessionmaker
 
 from config import config
 
+import logging
+
+logging.basicConfig(filename=config["config_log_destination"] + 'runtime.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 class DataBase:
     def __init__(self):
@@ -24,9 +27,14 @@ class DataBase:
 
     def reload(self) -> None:
 
-        self.Session = sessionmaker(bind=self.engine)
-        self.session = self.Session()
-        self.connection = self.session.connection()
+        try:
+            self.Session = sessionmaker(bind=self.engine)
+            self.session = self.Session()
+            self.connection = self.session.connection()
+
+        except Exception as e:
+
+            logging.critical("Can not reconnect to database", exec_info = True)
 
     def check_mysql_connection(self) -> None:
         if config["sqlite"] == "False":
@@ -34,8 +42,7 @@ class DataBase:
                 self.connection.scalar(select([1]))
                 return
             except: # FIXME put correct exception
-                print("Connection Timeout")
+                logging.info("Connection Timeout ... reconnecting")
             self.reload()
-
 
 database_handler: DataBase = DataBase()

@@ -8,6 +8,8 @@ from telegram.ext.dispatcher import run_async
 from telegram.message import Message
 from telegram.update import Update
 
+import logging
+
 from config import config
 from db_models import Memes
 from func.essentials import (
@@ -178,7 +180,7 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
         message.reply_text("Adding categories: " + tags + str(meme_id))
         categorise_meme(meme_id, tags, str(message.from_user.username), 1)
     except Exception as e:
-        message.reply_text(str(e))
+        logging.error("Telegram category", exec_info = True)
 
     message.reply_text("thx for your help")
 

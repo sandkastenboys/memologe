@@ -12,7 +12,8 @@ to_load: List[Union[Union[Tuple[str, Union[int, str]]]]] = [
     # core functionality
     ("max_post", 10),
     ("save_memes_to_disc", "True"),
-    ("destination", "/mnt/hdd/memes/"),
+    ("destination", "/app/app/data/"),
+    ("config_log_destination", "/app/app/log/"),
     ("read_on_start", "False"),
     # discord
     ("key", "$"),
