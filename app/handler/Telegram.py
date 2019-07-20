@@ -173,8 +173,13 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
         return
     database_handler.check_mysql_connection()
 
-    message.reply_text("Adding categories: " + tags + str(meme_id))
-    categorise_meme(meme_id, tags, str(message.from_user.username), 1)
+
+    try:
+        message.reply_text("Adding categories: " + tags + str(meme_id))
+        categorise_meme(meme_id, tags, str(message.from_user.username), 1)
+    except Exception as e:
+        message.reply_text(str(e))
+
     message.reply_text("thx for your help")
 
 
