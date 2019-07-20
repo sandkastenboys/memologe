@@ -111,7 +111,7 @@ class DiscordAPI(commands.bot.Bot):
             database_handler.check_mysql_connection()
             users: str = list_users()
             if users:
-                await ctx.send("```{}```".format(users))
+                await ctx.send(users)
             else:
                 await ctx.send(self.lang["info"]["db-no-posters"])
 

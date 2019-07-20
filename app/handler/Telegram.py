@@ -127,16 +127,15 @@ def _tags(bot: Bot, update: Update, args: List[str]) -> None:
 
 @run_async
 def posters(bot: Bot, update: Update, args: List[str]) -> None:
-    try:
-        message: Message = update.message
-        database_handler.check_mysql_connection()
-        users: str = list_users()
-        if users:
-            message.reply_text("```{}```".format(users))
-        else:
-            message.reply_text("No people in db")
-    except Exception as e:
-        logging.error("Tele poster:", exc_info = True)
+
+    message: Message = update.message
+    database_handler.check_mysql_connection()
+    users: str = list_users()
+    if users:
+        message.reply_text(users, parse_mode="Markdown")
+    else:
+        message.reply_text("No people in db")
+
 
 @run_async
 def idtomeme(bot: Bot, update: Update, args: List[str]) -> None:
@@ -210,6 +209,7 @@ def upvote(bot: Bot, update: Update) -> None:
     except Exception as e:
         logging.error(" Error in Telegram Module UpVote:", exc_info=True)
 
+
 @run_async
 def downvote(bot: Bot, update: Update) -> None:
     try:
@@ -221,8 +221,10 @@ def downvote(bot: Bot, update: Update) -> None:
     except Exception as e:
         logging.error(" Error in Telegram Module DownVote:", exc_info=True)
 
+
 def error_handler(bot: Bot, updater: Update, error):
-    logging.error(" Error in Telegram Module has Occured:", exc_info = True)
+    logging.error(" Error in Telegram Module has Occured:", exc_info=True)
+
 
 def init_telegram():
 

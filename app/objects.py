@@ -9,7 +9,12 @@ from config import config
 
 import logging
 
-logging.basicConfig(filename=config["config_log_destination"] + 'runtime.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    filename=config["config_log_destination"] + "runtime.log",
+    filemode="w",
+    format="%(name)s - %(levelname)s - %(message)s",
+)
+
 
 class DataBase:
     def __init__(self):
@@ -34,15 +39,16 @@ class DataBase:
 
         except Exception as e:
 
-            logging.critical("Can not reconnect to database", exc_info = True)
+            logging.critical("Can not reconnect to database", exc_info=True)
 
     def check_mysql_connection(self) -> None:
         if config["sqlite"] == "False":
             try:
                 self.connection.scalar(select([1]))
                 return
-            except: # FIXME put correct exception
+            except:  # FIXME put correct exception
                 logging.info("Connection Timeout ... reconnecting")
             self.reload()
+
 
 database_handler: DataBase = DataBase()

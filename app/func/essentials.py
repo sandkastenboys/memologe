@@ -207,7 +207,7 @@ def list_users() -> str:
     u: List[User] = database_handler.session.query(User).order_by(
         User.posts.desc()  # type: ignore
     ).all()
-    ret_val: str = "Username" + " " * 12 + "Platform" + " " * 12 + "Interactions" + " " * 8
+    ret_val: str = "```Username" + " " * 12 + "Platform" + " " * 12 + "Interactions" + " " * 8
     for x in range(min(len(u), 10)):
         user: str = u[x].username
         platform: str = resolve_platform[u[x].platform]
@@ -218,6 +218,7 @@ def list_users() -> str:
             " " * (20 - len(platform)),
             u[x].posts,
         )
+    ret_val += "```"
     return ret_val
 
 

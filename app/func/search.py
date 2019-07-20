@@ -6,6 +6,7 @@ from func.essentials import prep4post
 from objects import database_handler
 from config import config
 
+
 def strict_search(tags: list, amount: int):
     pass
     # mem: Association = session.query(Association).filter_by(Association.tag_id in tags).all()
