@@ -34,7 +34,7 @@ class DataBase:
 
         except Exception as e:
 
-            logging.critical("Can not reconnect to database", exec_info = True)
+            logging.critical("Can not reconnect to database", exc_info = True)
 
     def check_mysql_connection(self) -> None:
         if config["sqlite"] == "False":

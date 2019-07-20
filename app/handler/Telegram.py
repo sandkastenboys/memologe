@@ -3,7 +3,7 @@ from typing import Callable, List, Tuple, Union
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.bot import Bot
 from telegram.callbackquery import CallbackQuery
-from telegram.ext import CallbackQueryHandler, CommandHandler, Updater, ConversationHandler
+from telegram.ext import CallbackQueryHandler, CommandHandler, Updater
 from telegram.ext.dispatcher import run_async
 from telegram.message import Message
 from telegram.update import Update
@@ -201,25 +201,25 @@ def upvote(bot: Bot, update: Update) -> None:
     try:
         query: CallbackQuery = update.callback_query
         username: str = query.from_user.username
-        meme_id: int = int(query.message.text.split(" ")[8])
+        meme_id: int = int(query.message.text.split(" ")[4])
         database_handler.check_mysql_connection()
         rate_meme(meme_id, 1, username, 1)
     except Exception as e:
-        logging.error(" Error in Telegram Module UpVote:", exec_info=True)
+        logging.error(" Error in Telegram Module UpVote:", exc_info=True)
 
 @run_async
 def downvote(bot: Bot, update: Update) -> None:
     try:
         query: CallbackQuery = update.callback_query
         username: str = query.from_user.username
-        meme_id: int = int(query.message.text.split(" ")[8])
+        meme_id: int = int(query.message.text.split(" ")[4])
         database_handler.check_mysql_connection()
         rate_meme(meme_id, -1, username, 1)
     except Exception as e:
-        logging.error(" Error in Telegram Module DownVote:", exec_info=True)
+        logging.error(" Error in Telegram Module DownVote:", exc_info=True)
 
 def error_handler(bot: Bot, updater: Update, error):
-    logging.error(" Error in Telegram Module has Occured:", exec_info = True)
+    logging.error(" Error in Telegram Module has Occured:", exc_info = True)
 
 def init_telegram():
 
@@ -242,17 +242,6 @@ def init_telegram():
         updater.dispatcher.add_handler(
             CommandHandler(command, function, pass_args=True)
         )
-
-  #  conv_handler = ConversationHandler(
-   #     entry_points=[CommandHandler('start', start)],
-   #     states={
-    #        "UpVote": [CallbackQueryHandler(upvote)],
-    #        "DownVote": [CallbackQueryHandler(downvote)]
-    #    },
-     #   fallbacks=[CommandHandler('start', start)]
-    #)
-
-    #updater.dispatcher.add_handler(conv_handler)
 
     updater.dispatcher.add_handler(CallbackQueryHandler(upvote, pattern="UpVote"))
     updater.dispatcher.add_handler(CallbackQueryHandler(downvote, pattern="DownVote"))
