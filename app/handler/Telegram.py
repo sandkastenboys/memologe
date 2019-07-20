@@ -200,27 +200,19 @@ def _info(bot: Bot, update: Update, args: List[str]) -> None:
 
 @run_async
 def upvote(bot: Bot, update: Update) -> None:
-    try:
-        query: CallbackQuery = update.callback_query
-        username: str = query.from_user.username
-        meme_id: int = int(query.message.text.split(" ")[4])
-        database_handler.check_mysql_connection()
-        rate_meme(meme_id, 1, username, 1)
-    except Exception as e:
-        logging.error(" Error in Telegram Module UpVote:", exc_info=True)
-
+    query: CallbackQuery = update.callback_query
+    username: str = query.from_user.username
+    meme_id: int = int(query.message.text.split(" ")[4])
+    database_handler.check_mysql_connection()
+    rate_meme(meme_id, 1, username, 1)
 
 @run_async
 def downvote(bot: Bot, update: Update) -> None:
-    try:
-        query: CallbackQuery = update.callback_query
-        username: str = query.from_user.username
-        meme_id: int = int(query.message.text.split(" ")[4])
-        database_handler.check_mysql_connection()
-        rate_meme(meme_id, -1, username, 1)
-    except Exception as e:
-        logging.error(" Error in Telegram Module DownVote:", exc_info=True)
-
+    query: CallbackQuery = update.callback_query
+    username: str = query.from_user.username
+    meme_id: int = int(query.message.text.split(" ")[4])
+    database_handler.check_mysql_connection()
+    rate_meme(meme_id, -1, username, 1)
 
 def error_handler(bot: Bot, updater: Update, error):
     logging.error(" Error in Telegram Module has Occured:", exc_info=True)

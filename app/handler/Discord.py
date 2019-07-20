@@ -75,7 +75,7 @@ class DiscordAPI(commands.bot.Bot):
                 await ctx.send(self.lang["error"]["link-to-long"])
                 return
             database_handler.check_mysql_connection()
-            add_meme(link, tag, ctx.author.name, 0, ctx.created_at)
+            add_meme(link, tag, ctx.message.author.name, 0, ctx.message.created_at)
 
         @post.error
         async def post_error(ctx, error):
