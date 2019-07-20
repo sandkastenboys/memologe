@@ -160,7 +160,7 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
         )
         return
     if args[0].isdigit():
-        if int(args[1]) < 0:
+        if int(args[0]) < 0:
             message.reply_text("Your given number is below 0")
             return
 
@@ -173,15 +173,9 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
     else:
         message.reply_text("meme_id has to be a positive integer")
         return
+
     database_handler.check_mysql_connection()
-
-
-    try:
-        message.reply_text("Adding categories: " + tags + str(meme_id))
-        categorise_meme(meme_id, tags, str(message.from_user.username), 1)
-    except Exception as e:
-        logging.error("Telegram category", exec_info = True)
-
+    categorise_meme(meme_id, tags, str(message.from_user.username), 1)
     message.reply_text("thx for your help")
 
 
