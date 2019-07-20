@@ -127,13 +127,16 @@ def _tags(bot: Bot, update: Update, args: List[str]) -> None:
 
 @run_async
 def posters(bot: Bot, update: Update, args: List[str]) -> None:
-    message: Message = update.message
-    database_handler.check_mysql_connection()
-    users: str = list_users()
-
-    message.reply_text(users, parse_mode="Markdown")
-
-
+    try:
+        message: Message = update.message
+        database_handler.check_mysql_connection()
+        users: str = list_users()
+        if users:
+            await message.reply_text("```{}```".format(users))
+        else:
+            await message.reply_text("No people in db")
+    except Exception as e:
+        logging.error("Tele poster:", exc_info = True)
 
 @run_async
 def idtomeme(bot: Bot, update: Update, args: List[str]) -> None:
