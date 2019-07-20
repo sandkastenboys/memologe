@@ -132,9 +132,9 @@ def posters(bot: Bot, update: Update, args: List[str]) -> None:
         database_handler.check_mysql_connection()
         users: str = list_users()
         if users:
-            await message.reply_text("```{}```".format(users))
+            message.reply_text("```{}```".format(users))
         else:
-            await message.reply_text("No people in db")
+            message.reply_text("No people in db")
     except Exception as e:
         logging.error("Tele poster:", exc_info = True)
 
