@@ -8,13 +8,13 @@ resolve_platform: Dict[int, str] = {0: "Discord", 1: "Telegram"}
 def show_help() -> str:
     return (
         "Memologe Help ```"
-        "- $post <link> <tags>              seperate multiple tags with ';'\n"
+        "- $post <link> <tags>              adds your meme too the database -> seperate multiple tags with ';'\n"
         "- $random <count = 1>              posts random meme\n"
         "- $category <id> <tags>            adds these tags to the meme so that it can be found more easily\n"
         "- $search <tag> <count = 1>        searches memes based on tag\n"
         "- $size                            amount of memes in the db\n"
         "- $info <id>                       returns relevant information about the meme with this id\n"
-        "- $posters                         returns list of most active users\n"
+        "- $posters                         returns list of most active users (top 10)\n"
         "- $tags                            returns all tags in the database\n"
         "- $idtomeme <id>                   returns the meme with this id\n\n"
         "Example meme post:\n$post_meme  https://cdn.discordapp.com/attachments/344431213550764034/"

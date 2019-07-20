@@ -3,7 +3,7 @@ from typing import Callable, List, Tuple, Union
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.bot import Bot
 from telegram.callbackquery import CallbackQuery
-from telegram.ext import CallbackQueryHandler, CommandHandler, Updater
+from telegram.ext import CallbackQueryHandler, CommandHandler, Updater, ConversationHandler
 from telegram.ext.dispatcher import run_async
 from telegram.message import Message
 from telegram.update import Update
@@ -130,10 +130,9 @@ def posters(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
     database_handler.check_mysql_connection()
     users: str = list_users()
-    if users:
-        message.reply_text("```{}```".format(users), parse_mode="Markdown")
-    else:
-        message.reply_text("There are no posters in the database.")
+
+    message.reply_text(users, parse_mode="Markdown")
+
 
 
 @run_async
@@ -199,24 +198,28 @@ def _info(bot: Bot, update: Update, args: List[str]) -> None:
 
 @run_async
 def upvote(bot: Bot, update: Update) -> None:
-    query: CallbackQuery = update.callback_query
-    username: str = query.from_user.username
-    meme_id: int = int(query.message.text.split(" ")[8])
-    database_handler.check_mysql_connection()
-    rate_meme(meme_id, 1, username, 1)
-
+    try:
+        query: CallbackQuery = update.callback_query
+        username: str = query.from_user.username
+        meme_id: int = int(query.message.text.split(" ")[8])
+        database_handler.check_mysql_connection()
+        rate_meme(meme_id, 1, username, 1)
+    except Exception as e:
+        logging.error(" Error in Telegram Module UpVote:", exec_info=True)
 
 @run_async
 def downvote(bot: Bot, update: Update) -> None:
-    query: CallbackQuery = update.callback_query
-    username: str = query.from_user.username
-    meme_id: int = int(query.message.text.split(" ")[8])
-    database_handler.check_mysql_connection()
-    rate_meme(meme_id, -1, username, 1)
+    try:
+        query: CallbackQuery = update.callback_query
+        username: str = query.from_user.username
+        meme_id: int = int(query.message.text.split(" ")[8])
+        database_handler.check_mysql_connection()
+        rate_meme(meme_id, -1, username, 1)
+    except Exception as e:
+        logging.error(" Error in Telegram Module DownVote:", exec_info=True)
 
-
-def dispatcher_error(bot: Bot, updater: Update, error):
-    raise error
+def error_handler(bot: Bot, updater: Update, error):
+    logging.error(" Error in Telegram Module has Occured:", exec_info = True)
 
 def init_telegram():
 
@@ -240,7 +243,18 @@ def init_telegram():
             CommandHandler(command, function, pass_args=True)
         )
 
+  #  conv_handler = ConversationHandler(
+   #     entry_points=[CommandHandler('start', start)],
+   #     states={
+    #        "UpVote": [CallbackQueryHandler(upvote)],
+    #        "DownVote": [CallbackQueryHandler(downvote)]
+    #    },
+     #   fallbacks=[CommandHandler('start', start)]
+    #)
+
+    #updater.dispatcher.add_handler(conv_handler)
+
     updater.dispatcher.add_handler(CallbackQueryHandler(upvote, pattern="UpVote"))
     updater.dispatcher.add_handler(CallbackQueryHandler(downvote, pattern="DownVote"))
-    updater.dispatcher.add_error_handler(dispatcher_error)
+    updater.dispatcher.add_error_handler(error_handler)
     updater.start_polling()

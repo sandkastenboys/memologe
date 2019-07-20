@@ -6,6 +6,7 @@ from uuid import uuid4
 import emoji
 import requests
 from sqlalchemy import func
+import logging
 
 from config import config
 from db_models import Association, Memes, Ratings, Tags, User
@@ -168,6 +169,8 @@ def check_auther_registerd(author_name: str, platform: int) -> int:
         username=author_name, platform=platform
     ).first()
 
+    logging.info("created user", author_name, "on platform", platform)
+
     if author is None:
         u: User = User.create(platform, author_name)
         u.new_post()
@@ -237,7 +240,7 @@ def history(meme_id: int) -> str:
         + " " * 16
         + "Platform"
         + " " * 12
-        + "Time\n\n"
+        + "Time UTC\n\n"
     )
     message += (
         "__initial post__"
@@ -279,7 +282,7 @@ def merge_time_line(
         username: str = x[2].username
         if x[0] == 0:
             rate: int = x[1].rate
-            message += "{}{}{}{}{}{}{} UTC\n".format(
+            message += "{}{}{}{}{}{}{}\n".format(
                 rate_to_text(rate),
                 " " * (20 - len(rate_to_text(rate))),
                 username,
