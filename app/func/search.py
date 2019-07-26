@@ -31,6 +31,7 @@ def soft_search(tags: list, amount: int):
             send_memes.append(mem[count].id)
             yield prep4post(mem[count])
 
+
 def yield_search(tags: str, count: int = 1) -> Iterator[str]:
     tag_list: list = tags.split(";")
 

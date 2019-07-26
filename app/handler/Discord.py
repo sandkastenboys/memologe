@@ -20,7 +20,7 @@ from func.essentials import (
 )
 from func.search import yield_search
 from func.static import show_help, translate
-from objects import database_handler
+from objects import database_handler, logger
 
 
 class DiscordAPI(commands.bot.Bot):
@@ -51,6 +51,7 @@ class DiscordAPI(commands.bot.Bot):
             if isinstance(error, commands.MissingRequiredArgument):
                 await ctx.send(self.lang["error"]["miss-arg-searcht"])
             else:
+                logger.error(error, exc_info=True)
                 raise error
 
         @self.command(name="random", pass_context=True)
@@ -82,6 +83,7 @@ class DiscordAPI(commands.bot.Bot):
             if isinstance(error, commands.MissingRequiredArgument):
                 await ctx.send(self.lang["error"]["miss-arg-link"])
             else:
+                logger.error(error, exc_info=True)
                 raise error
 
         @self.command(pass_context=True)
@@ -95,6 +97,7 @@ class DiscordAPI(commands.bot.Bot):
             if isinstance(error, commands.MissingRequiredArgument):
                 await ctx.send(self.lang["error"]["miss-arg-category"])
             else:
+                logger.error(error, exc_info=True)
                 raise error
 
         @self.command(pass_context=True)
@@ -128,6 +131,7 @@ class DiscordAPI(commands.bot.Bot):
             if isinstance(error, commands.MissingRequiredArgument):
                 await ctx.send(self.lang["error"]["miss-arg-info"])
             else:
+                logger.error(error, exc_info=True)
                 raise error
 
         @self.command(pass_context=True)
@@ -142,6 +146,7 @@ class DiscordAPI(commands.bot.Bot):
             if isinstance(error, commands.MissingRequiredArgument):
                 await ctx.send(self.lang["error"]["miss-arg-idtomeme"])
             else:
+                logger.error(error, exc_info=True)
                 raise error
 
         @self.event

@@ -8,8 +8,6 @@ from telegram.ext.dispatcher import run_async
 from telegram.message import Message
 from telegram.update import Update
 
-import logging
-
 from config import config
 from db_models import Memes
 from func.essentials import (
@@ -24,7 +22,7 @@ from func.essentials import (
 )
 from func.search import yield_search
 from func.static import show_help
-from objects import database_handler
+from objects import database_handler, logger
 
 keyboard = [
     [InlineKeyboardButton("UpVote", callback_data="UpVote")],
@@ -209,7 +207,7 @@ def downvote(bot: Bot, update: Update) -> None:
 
 
 def error_handler(bot: Bot, updater: Update, error):
-    logging.error(" Error in Telegram Module has Occured:", exc_info=True)
+    logger.error(" Error in Telegram Module has Occured:", exc_info=True)
 
 
 def init_telegram():

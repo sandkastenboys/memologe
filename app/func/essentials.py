@@ -6,12 +6,11 @@ from uuid import uuid4
 import emoji
 import requests
 from sqlalchemy import func
-import logging
 
 from config import config
 from db_models import Association, Memes, Ratings, Tags, User
 from func.static import resolve_platform
-from objects import database_handler
+from objects import database_handler, logger
 
 
 def prep4post(meme: Memes) -> str:
@@ -155,7 +154,7 @@ def find_link(post: str) -> Union[str, bool]:
 def check_auther_registerd(author_name: str, platform: int) -> int:
     author: User = database_handler.session.query(User).filter_by(username=author_name, platform=platform).first()
 
-    logging.info("created user", author_name, "on platform", platform)
+    logger.info("created user", author_name, "on platform", platform)
 
     if author is None:
         u: User = User.create(platform, author_name)

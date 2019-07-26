@@ -9,11 +9,14 @@ from config import config
 
 import logging
 
-logging.basicConfig(
-    filename=config["config_log_destination"] + "runtime.log",
-    filemode="w",
-    format="%(name)s - %(levelname)s - %(message)s",
-)
+logger: logging.Logger = logging.Logger("memologe")
+
+file_handler: logging.FileHandler = logging.FileHandler(config["config_log_destination"] + "runtime.log")
+file_handler.setLevel(logging.DEBUG)
+file_format: logging.Formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+file_handler.setFormatter(file_format)
+
+logger.addHandler(file_handler)
 
 
 class DataBase:
@@ -39,7 +42,7 @@ class DataBase:
 
         except Exception as e:
 
-            logging.critical("Can not reconnect to database", exc_info=True)
+            logger.critical("Can not reconnect to database", exc_info=True)
 
     def check_mysql_connection(self) -> None:
         if config["sqlite"] == "False":
@@ -47,7 +50,7 @@ class DataBase:
                 self.connection.scalar(select([1]))
                 return
             except:  # FIXME put correct exception
-                logging.info("Connection Timeout ... reconnecting")
+                logger.info("Connection Timeout ... reconnecting")
             self.reload()
 
 
