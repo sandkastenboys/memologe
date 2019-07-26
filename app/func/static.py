@@ -23,7 +23,12 @@ def show_help() -> str:
         "$cate_meme 23 minecraft;engineer\n\n"
         "```\n"
         "When you have further questions, see contacts here: https://spartanerspaten.github.io/ \n"
-        "Please reports bugs here: https://github.com/SpartanerSpaten/Memologe/"
+        "Please reports bugs here: https://github.com/SpartanerSpaten/Memologe/\n\n"
+        "Some Rules\n"
+        "Dont add NSFW images too the database\n"
+        "Dont create useless or not appropriate stuff\n"
+        "Dont forget this Database needs maintaining work so dont make my life harder\n"
+        "Thx have fun"
     )
 
 
@@ -36,9 +41,5 @@ def translate(language: str = "en", path: str = "app/translate") -> ConfigParser
         print(os.getcwd())
         raise FileNotFoundError
     print("Translate sections {}".format(translate.sections()))
-    print(
-        "Translate keys {}".format(
-            {section: dict(translate[section]) for section in translate.sections()}
-        )
-    )
+    print("Translate keys {}".format({section: dict(translate[section]) for section in translate.sections()}))
     return translate

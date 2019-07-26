@@ -59,9 +59,7 @@ def post_meme(bot: Bot, update: Update, args: List[str]) -> None:
         post_tags = args[1]
 
     database_handler.check_mysql_connection()
-    message.reply_text(
-        add_meme(link, post_tags, message.from_user.username, 1, message.date)
-    )
+    message.reply_text(add_meme(link, post_tags, message.from_user.username, 1, message.date))
 
 
 @run_async
@@ -88,9 +86,7 @@ def userhelp(bot: Bot, update: Update, args: List[str]) -> None:
 def _size(bot: Bot, update: Update, args: List[str]) -> None:
     database_handler.check_mysql_connection()
     size: int = database_handler.session.query(Memes).count()
-    update.message.reply_text(
-        "There are : {} memes in the database".format(size), parse_mode="Markdown"
-    )
+    update.message.reply_text("There are : {} memes in the database".format(size), parse_mode="Markdown")
 
 
 @run_async
@@ -156,9 +152,7 @@ def idtomeme(bot: Bot, update: Update, args: List[str]) -> None:
 def category(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
     if len(args) < 2:
-        message.reply_text(
-            "You have to specify your meme_id and the tags you want to add ... not enough arguemts"
-        )
+        message.reply_text("You have to specify your meme_id and the tags you want to add ... not enough arguemts")
         return
     if args[0].isdigit():
         if int(args[0]) < 0:
@@ -184,9 +178,7 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
 def _info(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
     if len(args) == 0:
-        message.reply_text(
-            "You have to specify your meme_id and the tags you want to add ... not enough arguemts"
-        )
+        message.reply_text("You have to specify your meme_id and the tags you want to add ... not enough arguemts")
         return
     if args[0].isdigit():
         meme_id: int = int(args[0])
@@ -206,6 +198,7 @@ def upvote(bot: Bot, update: Update) -> None:
     database_handler.check_mysql_connection()
     rate_meme(meme_id, 1, username, 1)
 
+
 @run_async
 def downvote(bot: Bot, update: Update) -> None:
     query: CallbackQuery = update.callback_query
@@ -213,6 +206,7 @@ def downvote(bot: Bot, update: Update) -> None:
     meme_id: int = int(query.message.text.split(" ")[4])
     database_handler.check_mysql_connection()
     rate_meme(meme_id, -1, username, 1)
+
 
 def error_handler(bot: Bot, updater: Update, error):
     logging.error(" Error in Telegram Module has Occured:", exc_info=True)
@@ -236,9 +230,7 @@ def init_telegram():
     ]
 
     for command, function in commands:
-        updater.dispatcher.add_handler(
-            CommandHandler(command, function, pass_args=True)
-        )
+        updater.dispatcher.add_handler(CommandHandler(command, function, pass_args=True))
 
     updater.dispatcher.add_handler(CallbackQueryHandler(upvote, pattern="UpVote"))
     updater.dispatcher.add_handler(CallbackQueryHandler(downvote, pattern="DownVote"))

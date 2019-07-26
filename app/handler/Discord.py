@@ -157,9 +157,7 @@ class DiscordAPI(commands.bot.Bot):
                 elif str(reaction) == chr(11015):
                     rate_meme(meme_id, -1, user.name, 0)
 
-                await msg.channel.send(
-                    self.lang["success"]["vote-added"].format(user.name)
-                )
+                await msg.channel.send(self.lang["success"]["vote-added"].format(user.name))
 
     async def read_meme_channel(self) -> None:
         for channel in self.get_all_channels():
