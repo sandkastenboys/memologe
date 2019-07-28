@@ -39,7 +39,7 @@ class DataBase:
             self.Session = sessionmaker(bind=self.engine)
             self.session = self.Session()
             self.connection = self.session.connection()
-        except Exception as e:
+        except Exception:
             logger.critical("Can not reconnect to database", exc_info=True)
 
     def check_mysql_connection(self) -> None:
@@ -47,7 +47,7 @@ class DataBase:
             try:
                 self.connection.scalar(select([1]))
                 return
-            except:
+            except Exception:
                 logger.info("Connection Timeout ... reconnecting")
             self.reload()
 

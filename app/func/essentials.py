@@ -125,7 +125,7 @@ def download(link: str) -> str:
             except IOError:
                 print("Probably no file behind ", link)
         return filename
-    except:
+    except Exception:
         print("SSL Signature Wrong Skiping this meme")
 
     # Returns Empty string when something went wrong
