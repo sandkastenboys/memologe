@@ -188,22 +188,24 @@ def _info(bot: Bot, update: Update, args: List[str]) -> None:
     message.reply_text(text, parse_mode="Markdown")
 
 
+def vote(message, rating, username) -> None:
+    meme_id: int = int(message.split(" ")[4])
+    database_handler.check_mysql_connection()
+    rate_meme(meme_id, rating, username, 1)
+
+
 @run_async
 def upvote(bot: Bot, update: Update) -> None:
     query: CallbackQuery = update.callback_query
-    username: str = query.from_user.username
-    meme_id: int = int(query.message.text.split(" ")[4])
     database_handler.check_mysql_connection()
-    rate_meme(meme_id, 1, username, 1)
+    vote(query.message.text, 1, query.from_user.username)
 
 
 @run_async
 def downvote(bot: Bot, update: Update) -> None:
     query: CallbackQuery = update.callback_query
-    username: str = query.from_user.username
-    meme_id: int = int(query.message.text.split(" ")[4])
     database_handler.check_mysql_connection()
-    rate_meme(meme_id, -1, username, 1)
+    vote(query.message.text, -1, query.from_user.username)
 
 
 def error_handler(bot: Bot, updater: Update, error):
