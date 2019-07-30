@@ -11,9 +11,13 @@ import logging
 
 logger: logging.Logger = logging.Logger("memologe")
 
-file_handler: logging.FileHandler = logging.FileHandler(config["config_log_destination"] + "runtime.log")
+file_handler: logging.FileHandler = logging.FileHandler(
+    config["config_log_destination"] + "runtime.log"
+)
 file_handler.setLevel(logging.DEBUG)
-file_format: logging.Formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+file_format: logging.Formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(message)s"
+)
 file_handler.setFormatter(file_format)
 
 logger.addHandler(file_handler)
