@@ -10,7 +10,7 @@ from sqlalchemy import func
 from config import config
 from db_models import Association, Memes, Ratings, Tags, User
 from func.static import resolve_platform
-from objects import database_handler
+from objects import database_handler, logger
 
 
 def prep4post(meme: Memes) -> str:
@@ -137,7 +137,7 @@ def download(link: str) -> str:
             except IOError:
                 print("Probably no file behind ", link)
         return filename
-    except:
+    except Exception:
         print("SSL Signature Wrong Skiping this meme")
 
     # Returns Empty string when something went wrong
@@ -167,6 +167,8 @@ def check_auther_registerd(author_name: str, platform: int) -> int:
     author: User = database_handler.session.query(User).filter_by(
         username=author_name, platform=platform
     ).first()
+
+    logger.info("created user", author_name, "on platform", platform)
 
     if author is None:
         u: User = User.create(platform, author_name)
@@ -204,7 +206,7 @@ def list_users() -> str:
     u: List[User] = database_handler.session.query(User).order_by(
         User.posts.desc()  # type: ignore
     ).all()
-    ret_val: str = "Username" + " " * 12 + "Platform" + " " * 12 + "Interactions" + " " * 8
+    ret_val: str = "```Username" + " " * 12 + "Platform" + " " * 12 + "Interactions" + " " * 8
     for x in range(min(len(u), 10)):
         user: str = u[x].username
         platform: str = resolve_platform[u[x].platform]
@@ -215,6 +217,7 @@ def list_users() -> str:
             " " * (20 - len(platform)),
             u[x].posts,
         )
+    ret_val += "```"
     return ret_val
 
 
@@ -237,7 +240,7 @@ def history(meme_id: int) -> str:
         + " " * 16
         + "Platform"
         + " " * 12
-        + "Time\n\n"
+        + "Time UTC\n\n"
     )
     message += (
         "__initial post__"
@@ -279,7 +282,7 @@ def merge_time_line(
         username: str = x[2].username
         if x[0] == 0:
             rate: int = x[1].rate
-            message += "{}{}{}{}{}{}{} UTC\n".format(
+            message += "{}{}{}{}{}{}{}\n".format(
                 rate_to_text(rate),
                 " " * (20 - len(rate_to_text(rate))),
                 username,

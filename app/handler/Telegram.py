@@ -22,7 +22,7 @@ from func.essentials import (
 )
 from func.search import yield_search
 from func.static import show_help
-from objects import database_handler
+from objects import database_handler, logger
 
 keyboard = [
     [InlineKeyboardButton("UpVote", callback_data="UpVote")],
@@ -126,11 +126,12 @@ def _tags(bot: Bot, update: Update, args: List[str]) -> None:
 @run_async
 def posters(bot: Bot, update: Update, args: List[str]) -> None:
     message: Message = update.message
+    database_handler.check_mysql_connection()
     users: str = list_users()
     if users:
-        message.reply_text("```{}```".format(users), parse_mode="Markdown")
+        message.reply_text(users, parse_mode="Markdown")
     else:
-        message.reply_text("There are no posters in the database.")
+        message.reply_text("No people in db")
 
 
 @run_async
@@ -157,7 +158,7 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
         )
         return
     if args[0].isdigit():
-        if int(args[1]) < 0:
+        if int(args[0]) < 0:
             message.reply_text("Your given number is below 0")
             return
 
@@ -170,9 +171,8 @@ def category(bot: Bot, update: Update, args: List[str]) -> None:
     else:
         message.reply_text("meme_id has to be a positive integer")
         return
-    database_handler.check_mysql_connection()
 
-    message.reply_text("Adding categories: " + tags + str(meme_id) + str(message.from_user.username))
+    database_handler.check_mysql_connection()
     categorise_meme(meme_id, tags, str(message.from_user.username), 1)
     message.reply_text("thx for your help")
 
@@ -195,22 +195,28 @@ def _info(bot: Bot, update: Update, args: List[str]) -> None:
     message.reply_text(text, parse_mode="Markdown")
 
 
+def vote(message, rating, username) -> None:
+    meme_id: int = int(message.split(" ")[4])
+    database_handler.check_mysql_connection()
+    rate_meme(meme_id, rating, username, 1)
+
+
 @run_async
 def upvote(bot: Bot, update: Update) -> None:
     query: CallbackQuery = update.callback_query
-    username: str = query.from_user.username
-    meme_id: int = int(query.message.text.split(" ")[8])
     database_handler.check_mysql_connection()
-    rate_meme(meme_id, 1, username, 1)
+    vote(query.message.text, 1, query.from_user.username)
 
 
 @run_async
 def downvote(bot: Bot, update: Update) -> None:
     query: CallbackQuery = update.callback_query
-    username: str = query.from_user.username
-    meme_id: int = int(query.message.text.split(" ")[8])
     database_handler.check_mysql_connection()
-    rate_meme(meme_id, -1, username, 1)
+    vote(query.message.text, -1, query.from_user.username)
+
+
+def error_handler(bot: Bot, updater: Update, error):
+    logger.error(" Error in Telegram Module has Occured:", exc_info=True)
 
 
 def init_telegram():
@@ -237,4 +243,5 @@ def init_telegram():
 
     updater.dispatcher.add_handler(CallbackQueryHandler(upvote, pattern="UpVote"))
     updater.dispatcher.add_handler(CallbackQueryHandler(downvote, pattern="DownVote"))
+    updater.dispatcher.add_error_handler(error_handler)
     updater.start_polling()

@@ -6,6 +6,7 @@ from func.essentials import prep4post
 from objects import database_handler
 from config import config
 
+
 def strict_search(tags: list, amount: int):
     pass
     # mem: Association = session.query(Association).filter_by(Association.tag_id in tags).all()
@@ -25,12 +26,10 @@ def soft_search(tags: list, amount: int):
         return "Search query did not return any results."
     send_memes: list = []
     random.shuffle(mem)
-    count: int = 0
-    while range(min(len(mem), amount, config["max_post"])):
+    for count in range(min(len(mem), amount, config["max_post"])):
         if mem[count].id not in send_memes:
             send_memes.append(mem[count].id)
             yield prep4post(mem[count])
-        count += 1
 
 
 def yield_search(tags: str, count: int = 1) -> Iterator[str]:

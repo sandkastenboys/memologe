@@ -7,6 +7,21 @@ from sqlalchemy.orm import sessionmaker
 
 from config import config
 
+import logging
+
+logger: logging.Logger = logging.Logger("memologe")
+
+file_handler: logging.FileHandler = logging.FileHandler(
+    config["config_log_destination"] + "runtime.log"
+)
+file_handler.setLevel(logging.DEBUG)
+file_format: logging.Formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(message)s"
+)
+file_handler.setFormatter(file_format)
+
+logger.addHandler(file_handler)
+
 
 class DataBase:
     def __init__(self):
@@ -24,17 +39,20 @@ class DataBase:
 
     def reload(self) -> None:
 
-        self.Session = sessionmaker(bind=self.engine)
-        self.session = self.Session()
-        self.connection = self.session.connection()
+        try:
+            self.Session = sessionmaker(bind=self.engine)
+            self.session = self.Session()
+            self.connection = self.session.connection()
+        except Exception:
+            logger.critical("Can not reconnect to database", exc_info=True)
 
     def check_mysql_connection(self) -> None:
         if config["sqlite"] == "False":
             try:
                 self.connection.scalar(select([1]))
                 return
-            except: # FIXME put correct exception
-                print("Connection Timeout")
+            except Exception:
+                logger.info("Connection Timeout ... reconnecting")
             self.reload()
 
 
