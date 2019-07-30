@@ -1,5 +1,6 @@
 import os
 from configparser import ConfigParser
+from objects import logger
 from typing import Dict
 
 resolve_platform: Dict[int, str] = {0: "Discord", 1: "Telegram"}
@@ -38,12 +39,11 @@ def translate(language: str = "en", path: str = "app/translate") -> ConfigParser
     if os.path.isfile(lang_file):
         translate.read(lang_file)
     else:
-        print(os.getcwd())
+        logger.debug("Current working directory %s", os.getcwd())
         raise FileNotFoundError
-    print("Translate sections {}".format(translate.sections()))
-    print(
-        "Translate keys {}".format(
-            {section: dict(translate[section]) for section in translate.sections()}
-        )
+    logger.debug("Translate sections %s", translate.sections())
+    logger.debug(
+        "Translate keys %s",
+        {section: dict(translate[section]) for section in translate.sections()},
     )
     return translate

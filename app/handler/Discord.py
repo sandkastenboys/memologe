@@ -31,7 +31,7 @@ class DiscordAPI(commands.bot.Bot):
 
         @self.event
         async def on_ready():
-            print(config["read_on_start"])
+            logger.info("Reading Memes %s", config["read_on_start"])
             if config["read_on_start"] == "True":
                 await self.read_meme_channel()
 
@@ -42,7 +42,7 @@ class DiscordAPI(commands.bot.Bot):
         @self.command(pass_context=True)
         async def search(ctx, tags, count="1"):
             database_handler.check_mysql_connection()
-            print("Searching for {} of {}".format(count, tags))
+            logger.info("Searching for %s of %s", count, tags)
             for msg in yield_search(tags, int(count)):
                 await ctx.send(msg)
 
@@ -152,7 +152,7 @@ class DiscordAPI(commands.bot.Bot):
         @self.event
         async def on_reaction_add(reaction, user):
             if user != self.user:
-                print(user.name, "/", user)
+                logger.debug("Username %s / User %s", user.name, user)
                 database_handler.check_mysql_connection()
                 msg = reaction.message
                 meme_id: int = int(msg.content.split(" ")[4])
@@ -172,7 +172,7 @@ class DiscordAPI(commands.bot.Bot):
                 await self.process(channel)
 
     async def process(self, channel):
-        print("call:", channel)
+        logger.debug("Called from channel %s", channel)
         async for message in channel.history(limit=10000):
             link: Union[str, bool] = find_link(message.content)
 
@@ -180,5 +180,5 @@ class DiscordAPI(commands.bot.Bot):
                 if "discord" in link:
                     link: str = link.split("?")[0]
                 if len(link) < 512:
-                    print(link)
+                    logger.info("Added meme with link %s", link)
                     add_meme(link, "", message.author.name, 0, message.created_at)

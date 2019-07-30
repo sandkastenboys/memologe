@@ -1,6 +1,9 @@
 ---
 version: "3.2"
 
+volumes:
+  db:
+
 networks:
   memologe:
 
@@ -16,7 +19,7 @@ services:
   db:
     image: mariadb
     volumes:
-      - $PWD/db:/var/lib/mysql
+      - db:/var/lib/mysql
     networks:
       - memologe
     environment:
@@ -35,7 +38,6 @@ services:
       - db
     volumes:
       - $PWD/data/:/app/data/
-      - $PWD/logs/:/app/logs/
     networks:
       - memologe
     environment:
@@ -47,7 +49,6 @@ services:
       MYSQL_DATABASE: memes
       save_memes_to_disc: 'False'
       destination: /app/data/
-      config_log_destination: /app/logs/
       read_on_start: 'False'
       # at leat one token is required
       telegram_token:

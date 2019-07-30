@@ -1,8 +1,9 @@
 from config import config
 from handler.Discord import DiscordAPI
 from handler.Telegram import init_telegram
+from objects import logger
 
-print("Starting Memologe ...")
+logger.info("Starting Memologe ...")
 
 if config["telegram_token"]:
     init_telegram()
