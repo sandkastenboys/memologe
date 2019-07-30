@@ -121,7 +121,6 @@ def _tags(bot: Bot, update: Update, args: List[str]) -> None:
 
 @run_async
 def posters(bot: Bot, update: Update, args: List[str]) -> None:
-
     message: Message = update.message
     database_handler.check_mysql_connection()
     users: str = list_users()
