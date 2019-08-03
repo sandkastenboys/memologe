@@ -18,7 +18,6 @@ def prep4post(meme: Memes) -> str:
 
     msg: str = "Here is meme number {}".format(meme.id)
     tags: List[str] = query_tags(meme.id)
-    print(tags)
     if tags:
         msg += " with tags {}".format(";".join(tags))
     msg += "originaly posted by {}\n{}".format(user.username, meme.link)
@@ -165,9 +164,9 @@ def check_auther_registerd(author_name: str, platform: int) -> int:
         username=author_name, platform=platform
     ).first()
 
-    logger.info("created user %s on platform %s", author_name, platform)
-
     if author is None:
+        logger.info("created user %s on platform %s", author_name, platform)
+
         u: User = User.create(platform, author_name)
         u.new_post()
         return u.user_id
