@@ -42,8 +42,5 @@ def translate(language: str = "en", path: str = "app/translate") -> ConfigParser
         logger.debug("Current working directory %s", os.getcwd())
         raise FileNotFoundError
     logger.debug("Translate sections %s", translate.sections())
-    logger.debug(
-        "Translate keys %s",
-        {section: dict(translate[section]) for section in translate.sections()},
-    )
+    logger.debug("Translate keys %s", {section: dict(translate[section]) for section in translate.sections()})
     return translate
