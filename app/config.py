@@ -11,9 +11,9 @@ to_load: List[Union[Union[Tuple[str, Union[int, str]]]]] = [
     ("MYSQL_PASSWORD", ""),
     # core functionality
     ("max_post", 10),
-    ("save_memes_to_disc", "True"),
+    ("save_memes_to_disc", "False"),
     ("destination", "/app/app/data/"),
-    ("config_log_destination", "/app/app/log/"),
+    ("config_log_destination", "./"),
     ("read_on_start", "False"),
     # discord
     ("key", "$"),

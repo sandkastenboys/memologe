@@ -106,3 +106,4 @@ venv.bak/
 # custom
 .idea/
 docker-compose.yml
+data/

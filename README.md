@@ -9,7 +9,7 @@ Coming Soon ...
 
 ## Setup
 
-This is a server application so it only runs on linux.
+Should only run under Linux (Docker).
 
 ```sybase
 $ git clone https://github.com/sandkastenboys/memologe.git
@@ -23,6 +23,10 @@ $ ./start.sh
 ```
 
 ## Features
+
+ - Language
+ - Download of all Images
+ - Discord and Telegram
 
 #### Commands
     
@@ -54,3 +58,5 @@ This bot allows you too download your memes and save it an e.g an external hard 
 ## Bug Reports
 
 Create an [ISSUE](https://github.com/sandkastenboys/memologe/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
+
+## Contribute

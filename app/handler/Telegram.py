@@ -103,7 +103,7 @@ def search(bot: Bot, update: Update, args: List[str]) -> None:
         count = 1
     tags = args[0]
     database_handler.check_mysql_connection()
-    print("Searching for {} of {}".format(count, tags))
+    logger.info("Searching for {} of {}".format(count, tags))
     for msg in yield_search(tags, count):
         message.reply_text(msg, reply_markup=keyboard_markup)
 
@@ -121,7 +121,6 @@ def _tags(bot: Bot, update: Update, args: List[str]) -> None:
 
 @run_async
 def posters(bot: Bot, update: Update, args: List[str]) -> None:
-
     message: Message = update.message
     database_handler.check_mysql_connection()
     users: str = list_users()

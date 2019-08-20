@@ -6,7 +6,6 @@ volumes:
 
 networks:
   memologe:
-  host:
 
 services:
   # adminer:
@@ -38,11 +37,9 @@ services:
     depends_on:
       - db
     volumes:
-      - /mnt/hdd/:/app/app/data/
-      - /mnt/logs/:/app/app/logs/
+      - $PWD/data/:/app/data/
     networks:
       - memologe
-      - host
     environment:
       sqlite: 'False'
       MYSQL_HOSTNAME: db
@@ -51,10 +48,9 @@ services:
       MYSQL_PORT: 3306
       MYSQL_DATABASE: memes
       save_memes_to_disc: 'False'
-      destination: /app/app/data/
-      config_log_destination: /app/app/logs/
+      destination: /app/data/
       read_on_start: 'False'
-      # at leat one token required
+      # at leat one token is required
       telegram_token:
       discord_token:
     restart: unless-stopped

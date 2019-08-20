@@ -25,7 +25,6 @@ def prep4post(meme: Memes) -> str:
 
     msg: str = "Here is meme number {}".format(meme.id)
     tags: List[str] = query_tags(meme.id)
-    print(tags)
     if tags:
         msg += " with tags {}".format(";".join(tags))
     msg += "originaly posted by {}\n{}".format(user.username, meme.link)
@@ -42,22 +41,23 @@ def query_tags(meme_id: int) -> List[str]:
 
 
 def parse_amount(string: str) -> int:
+    how_many: int = 0
     if string == "":
-        how_many: int = 1
+        how_many = 1
     else:
         try:
-            how_many: int = int(string)
+            how_many = int(string)
         except ValueError:
-            how_many: int = 1
+            how_many = 1
     return how_many
 
 
 def random_meme() -> Union[Memes, str]:
     if config["sqlite"] == "True":  # DB manager dialect depending
-        meme: Memes = database_handler.session.query(Memes).order_by(func.random()).first()
-
+        random = func.random()
     else:
-        meme: Memes = database_handler.session.query(Memes).order_by(func.rand()).first()
+        random = func.rand()
+    meme: Memes = database_handler.session.query(Memes).order_by(random).first()
 
     if meme is None:
         return "There are 0 memes in the database"
@@ -130,10 +130,10 @@ def download(link: str) -> str:
                         r.raw.decode_content = True
                         shutil.copyfileobj(r.raw, f)
             except IOError:
-                print("Probably no file behind ", link)
+                logger.error("Probably no file behind %s", link)
         return filename
-    except:
-        print("SSL Signature Wrong Skiping this meme")
+    except Exception:
+        logger.error("SSL Signature Wrong Skiping this meme")
 
     # Returns Empty string when something went wrong
     return ""
@@ -161,9 +161,9 @@ def find_link(post: str) -> Union[str, bool]:
 def check_auther_registerd(author_name: str, platform: int) -> int:
     author: User = database_handler.session.query(User).filter_by(username=author_name, platform=platform).first()
 
-    logger.info("created user", author_name, "on platform", platform)
-
     if author is None:
+        logger.info("created user %s on platform %s", author_name, platform)
+
         u: User = User.create(platform, author_name)
         u.new_post()
         return u.user_id
@@ -213,18 +213,17 @@ def history(meme_id: int) -> str:
         return "Sorry there is no meme with this id yet"
 
     user: User = id_to_user(meme.stealer)
-    message: str = "\nPosted by: " + str(user.username) + "\nTime: " + str(meme.post_time) + "\nRating: " + str(
-        sum_ratings(meme.id)
-    ) + "\n\n"
-    message += "```Tag / Vote" + " " * 10 + "User" + " " * 16 + "Platform" + " " * 12 + "Time UTC\n\n"
-    message += (
-        "__initial post__"
-        + " " * 4
-        + user.username
-        + " " * (20 - len(user.username))
-        + resolve_platform[user.platform]
-        + " " * (20 - len(resolve_platform[user.platform]))
-        + meme.post_time.strftime("%Y-%m-%d %H:%M:%S")
+    message: str = "\nPosted by: {}\nTime: {}\nRating: {}\n\n".format(
+        str(user.username), meme.post_time, sum_ratings(meme.id)
+    )
+    message += "```Tag / Vote{}User{}Platform{}Time UTC\n\n".format(" " * 10, " " * 16, " " * 12)
+    message += "__initial post__{}{}{}{}{}{}".format(
+        " " * 4,
+        user.username,
+        " " * (20 - len(user.username)),
+        resolve_platform[user.platform],
+        " " * (20 - len(resolve_platform[user.platform])),
+        meme.post_time.strftime("%Y-%m-%d %H:%M:%S"),
     )
 
     tags: List[Tuple[Tags, Association, User]] = (

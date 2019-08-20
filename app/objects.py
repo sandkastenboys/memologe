@@ -1,4 +1,6 @@
 import os
+import logging
+from logging import Formatter, Handler, Logger
 
 from sqlalchemy import create_engine, select
 from sqlalchemy.ext.declarative import declarative_base
@@ -7,16 +9,12 @@ from sqlalchemy.orm import sessionmaker
 
 from config import config
 
-import logging
-
-logger: logging.Logger = logging.Logger("memologe")
-
-file_handler: logging.FileHandler = logging.FileHandler(config["config_log_destination"] + "runtime.log")
-file_handler.setLevel(logging.DEBUG)
-file_format: logging.Formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-file_handler.setFormatter(file_format)
-
-logger.addHandler(file_handler)
+logger: Logger = logging.Logger(__name__)
+handler: Handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+format: Formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
+handler.setFormatter(format)
+logger.addHandler(handler)
 
 
 class DataBase:
@@ -39,7 +37,7 @@ class DataBase:
             self.Session = sessionmaker(bind=self.engine)
             self.session = self.Session()
             self.connection = self.session.connection()
-        except Exception as e:
+        except Exception:
             logger.critical("Can not reconnect to database", exc_info=True)
 
     def check_mysql_connection(self) -> None:
@@ -47,8 +45,8 @@ class DataBase:
             try:
                 self.connection.scalar(select([1]))
                 return
-            except:
-                logger.info("Connection Timeout ... reconnecting")
+            except Exception:
+                logger.error("Connection Timeout ... reconnecting")
             self.reload()
 
 
