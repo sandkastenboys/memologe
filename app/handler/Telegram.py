@@ -208,6 +208,11 @@ def downvote(bot: Bot, update: Update) -> None:
     vote(query.message.text, -1, query.from_user.username)
 
 
+@run_async
+def topmeme(bot: Bot, update: Update) -> None:
+    database_handler.check_mysql_connection()
+
+
 def error_handler(bot: Bot, updater: Update, error):
     logger.error(" Error in Telegram Module has Occured:", exc_info=True)
 
@@ -227,6 +232,7 @@ def init_telegram():
         ["idtomeme", idtomeme],
         ["category", category],
         ["info", _info],
+        ["topmeme", topmeme],
     ]
 
     for command, function in commands:

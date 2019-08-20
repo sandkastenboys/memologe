@@ -9,11 +9,18 @@ from sqlalchemy import func
 
 from config import config
 from db_models import Association, Memes, Ratings, Tags, User
-from func.static import resolve_platform
 from objects import database_handler, logger
+from func.cache_classes import top_meme_cached_query
+from func.static import resolve_platform
 
 
 def prep4post(meme: Memes) -> str:
+    """
+    WARNING When you modify this function please make shure you adjusted the parsers.
+    :param meme: Meme
+    :return: String ready for post
+    """
+
     user: User = id_to_user(meme.stealer)
 
     msg: str = "Here is meme number {}".format(meme.id)
@@ -297,6 +304,7 @@ def rate_meme(meme_id: int, rate: int, user: str, platform: int) -> None:
     ).first()
     if not rating:
         Ratings.create(author_uuid, meme_id, rate)
+        top_meme_cached_query.updated_rating(meme_id, sum_ratings(meme_id))
 
 
 def sum_ratings(meme_id: int) -> int:

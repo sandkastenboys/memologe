@@ -44,7 +44,9 @@ class DiscordAPI(commands.bot.Bot):
             database_handler.check_mysql_connection()
             print("Searching for {} of {}".format(count, tags))
             for msg in yield_search(tags, int(count)):
-                await ctx.send(msg)
+                post: Context = await ctx.send(msg)
+                await post.add_reaction(chr(11014))
+                await post.add_reaction(chr(11015))
 
         @search.error
         async def search_error(ctx, error):

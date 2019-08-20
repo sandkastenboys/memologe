@@ -1,5 +1,5 @@
 import random
-from typing import Iterator, List
+from typing import Iterator, List, Tuple
 
 from db_models import Association, Memes, Tags, Ratings
 from func.essentials import prep4post
@@ -42,26 +42,3 @@ def yield_search(tags: str, count: int = 1) -> Iterator[str]:
 
     for meme in soft_search(tags_list, count):
         yield str(meme)
-
-
-class TopMemes:
-
-    def __init__(self) -> 'TopMemes':
-
-        self.top_memes = []
-
-    def update_top_memes(self) -> None:
-        temp_raiting : dict = {}
-        all_likes: list = database_handler.session.query(Ratings).all()
-        for rating in all_likes:
-            if rating.meme_id in temp_raiting:
-                temp_raiting[rating.meme_id] += rating.rate
-            else:
-                temp_raiting[rating.meme_id] = rating.rate
-        sorted_d = sorted((key, value) for (key,value) in temp_raiting.items())
-        self.top_memes = sorted_d[:10]
-
-    def get_top_memes(self) -> Iterator:
-        return_query: List[Memes] = database_handler.session.query(Memes).filter(Memes.id in self.top_memes).all()
-        for meme in return_query:
-            yield prep4post(meme)
